@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Products - Sharkim Traders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-6">Manage Products</h2>
+
+    <!-- Search -->
+    <div class="mb-4 flex gap-2">
+      <input id="searchInput" type="text" placeholder="Search by product title..."
+        class="w-full px-4 py-2 border rounded" />
+      <button id="searchBtn"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Search</button>
+      <button id="resetBtn"
+        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">Reset</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Products will render here -->
+    </div>
+
+    <p id="status" class="mt-4 text-sm text-gray-700"></p>
+  </div>
+
+  <script>
+    const supabaseUrl = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc';
+    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const statusText = document.getElementById('status');
+    const productsGrid = document.getElementById('productsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    async function fetchProducts(searchTerm = "") {
+      statusText.textContent = "Loading products...";
+
+      let query = client.from("Products").select("*").order("id", { ascending: false });
+
+      if (searchTerm) {
+        query = query.ilike("title", `%${searchTerm}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("❌ Fetch Error:", error.message);
+        statusText.textContent = "❌ Error: " + error.message;
+        return;
+      }
+
+      renderProducts(data);
+      statusText.textContent = `✅ Loaded ${data.length} products.`;
+    }
+
+    function renderProducts(products) {
+      productsGrid.innerHTML = "";
+
+      if (products.length === 0) {
+        productsGrid.innerHTML = `<p class="text-gray-500 col-span-full">No products found.</p>`;
+        return;
+      }
+
+      products.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "bg-white border rounded shadow p-4 flex flex-col";
+
+        card.innerHTML = `
+          <img src="${product.image_url}" alt="${product.title}" class="h-40 w-full object-cover rounded mb-4">
+          <h3 class="text-lg font-semibold">${product.title}</h3>
+          <p class="text-gray-600">Ksh ${product.price} <span class="line-through text-sm">Ksh ${product.original_price}</span></p>
+          <p class="text-sm text-gray-500 mt-1">${product.category} ${product.subcategory ? "• " + product.subcategory : ""}</p>
+
+          <div class="mt-4 flex gap-2">
+            <button onclick="editProduct(${product.id})"
+              class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded">Edit</button>
+            <button onclick="deleteProduct(${product.id})"
+              class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded">Delete</button>
+          </div>
+        `;
+
+        productsGrid.appendChild(card);
+      });
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("Are you sure you want to delete this product?")) return;
+
+      const { error } = await client.from("Products").delete().eq("id", id);
+
+      if (error) {
+        alert("❌ Delete failed: " + error.message);
+      } else {
+        alert("✅ Product deleted!");
+        fetchProducts();
+      }
+    }
+
+    function editProduct(id) {
+      window.location.href = `edit.html?id=${id}`; // you’ll build edit.html later
+    }
+
+    // Event Listeners
+    searchBtn.addEventListener("click", () => {
+      const term = searchInput.value.trim();
+      fetchProducts(term);
+    });
+
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      fetchProducts();
+    });
+
+    // Load on page ready
+    fetchProducts();
+  </script>
+
+</body>
+</html>
