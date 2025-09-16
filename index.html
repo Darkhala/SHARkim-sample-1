@@ -3,36 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/icon logo.png">
   <title>Sharkim Traders</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
+   <style>
+    body {
+      font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 font-[Times_New_Roman,sans-serif]">
 
-  <!-- HEADER -->
-  <header class="bg-[#af8532] text-black px-6 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img src="images/sharkim black logo.png" alt="Sharkim Logo" class="h-20">
-      <h1 class="text-2xl font-bold"></h1>
-    </div>
-    <div class="flex gap-4 items-center">
-      <button id="authBtn" class="bg-white text-red-600 px-4 py-2 rounded">Login / Register</button>
-      <div id="userSection" class="hidden flex items-center gap-3">
-        <span id="username"></span>
-        <button id="logoutBtn" class="bg-black text-white px-3 py-1 rounded">Logout</button>
-        <button id="cartBtn" class="relative">
-          🛒 <span id="cartCount" class="absolute -top-2 -right-2 bg-gold text-black rounded-full px-2 text-xs">0</span>
-        </button>
-      </div>
-    </div>
-  </header>
+<!-- HEADER -->
+<header class="bg-black text-white px-4 py-3 relative">
+
+  <!-- Cart button (always top-right) -->
+  <button id="cartBtn"
+      class="absolute top-2 right-4 flex items-center px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7zm0 16c-1.1 0-2 .9-2 2s.9 2 2 2c1.2 0 2-.9 2-2s-.8-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2c1.2 0 2-.9 2-2s-.9-2-2-2z"/>
+        </svg>
+    Cart
+    <span id="cartCount" class="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+  </button>
+
+  <!-- Logo + H1 -->
+<div class="flex flex-col items-center gap-2 mt-6">
+  <img src="images/sharkim_gold_logo.png" alt="Sharkim Logo" class="h-20">
+  <h1 class="text-lg font-bold" style="color: #ac8334;">usted ordena, entregamos</h1>
+</div>
+
+  <!-- Search bar -->
+  <div class="flex items-center w-full max-w-md mx-auto mt-4">
+    <input 
+      type="text" 
+      id="searchInput" 
+      placeholder="Search products..." 
+      class="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500 text-black"
+    >
+    <button 
+      id="searchBtn" 
+      class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center justify-center"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <circle cx="11" cy="11" r="8" stroke-width="2"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2"/>
+      </svg>
+    </button>
+  </div>
+
+</header>
 
   <!-- BANNER -->
-  <section class="bg-black text-white text-center py-6">
+<section 
+  class="text-white text-center py-12 bg-cover bg-center relative" 
+  style="background-image: url('/images/Banner.png');"
+>
+  <!-- overlay for readability -->
+  <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+
+  <div class="relative z-10">
     <h2 class="text-3xl font-semibold">Best Appliances Discount</h2>
-    <p class="text-gray-300">Shop now & save up to 40%</p>
+    <p class="text-gray-200">Shop now & save up to 40%</p>
     <button class="mt-4 px-6 py-2 bg-red-600 rounded text-white">Shop Now</button>
-  </section>
+  </div>
+</section>
+
 
   <!-- CATEGORIES BAR -->
   <nav class="bg-white shadow p-3 overflow-x-auto whitespace-nowrap">
@@ -43,35 +80,78 @@
   <main class="p-6 space-y-12" id="mainContent"></main>
 
   <!-- PRODUCT OVERLAY -->
-  <div id="productOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
-      <button onclick="closeOverlay()" class="absolute top-2 right-2 text-gray-500">✖</button>
-      <img id="overlayImage" src="" alt="" class="h-48 mx-auto object-contain mb-4">
-      <h2 id="overlayTitle" class="text-xl font-bold"></h2>
-      <p id="overlayCategory" class="text-sm text-gray-500"></p>
-      <p class="line-through text-gray-500">Ksh <span id="overlayOriginal"></span></p>
-      <p class="text-red-600 font-bold">Ksh <span id="overlayPrice"></span></p>
-      <p class="bg-green-600 text-white text-xs inline-block px-2 py-1 rounded mt-1"><span id="overlayDiscount"></span>% OFF</p>
-      <div class="flex gap-2 mt-4">
-        <a id="overlayWhatsapp" target="_blank" class="px-3 py-1 bg-green-500 text-white rounded">WhatsApp</a>
-        <button onclick="openEmailForm(document.getElementById('overlayTitle').innerText)" class="px-3 py-1 bg-blue-500 text-white rounded">Email</button>
-        <button id="addToCartBtn" class="px-3 py-1 bg-red-600 text-white rounded">Add to Cart</button>
+<div id="productOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full relative">
+    
+    <!-- Close button -->
+    <button onclick="closeOverlay()" class="absolute top-2 right-2 text-gray-500 hover:text-black">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- Two-column layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- LEFT: Product image -->
+      <div class="flex items-center justify-center">
+        <img id="overlayImage" src="" alt="" class="max-h-96 object-contain rounded">
+      </div>
+
+      <!-- RIGHT: Product details -->
+      <div>
+        <!-- Title & category -->
+        <h2 id="overlayTitle" class="text-2xl font-bold mb-1"></h2>
+        <p id="overlayCategory" class="text-sm text-gray-500 mb-3"></p>
+
+        <!-- Price info -->
+        <div class="mb-4">
+          <p class="line-through text-gray-500">Ksh <span id="overlayOriginal"></span></p>
+          <p class="text-red-600 font-bold text-2xl">Ksh <span id="overlayPrice"></span></p>
+          <p class="bg-green-600 text-white text-xs inline-block px-2 py-1 rounded mt-1">
+            <span id="overlayDiscount"></span>% OFF
+          </p>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-6">
+          <h3 class="text-md font-semibold">Description</h3>
+          <p id="overlayDescription" class="text-gray-700 text-sm leading-relaxed mt-1"></p>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex flex-wrap gap-3">
+          <!-- WhatsApp -->
+          <a id="overlayWhatsapp" target="_blank" 
+             class="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 32 32" fill="currentColor">
+              <path d="M16 .5C7.6.5.5 7.6.5 16c0 2.8.7 5.5 2.2 7.9L0 32l8.3-2.7c2.3 1.3 5 2 7.7 2 8.4 0 15.5-7.1 15.5-15.5S24.4.5 16 .5zM16 29c-2.4 0-4.8-.6-6.9-1.8l-.5-.3-4.9 1.6 1.6-4.8-.3-.5C3.6 21 3 18.6 3 16 3 9.4 9.4 3 16 3s13 6.4 13 13-6.4 13-13 13zm7.3-9.8c-.4-.2-2.3-1.1-2.6-1.2s-.6-.2-.8.2c-.2.4-1 1.2-1.2 1.4s-.4.3-.8.1c-.4-.2-1.6-.6-3-2-1.1-1.1-1.9-2.3-2.1-2.7s0-.6.2-.8.4-.4.6-.6c.2-.2.3-.4.4-.6.1-.2 0-.5 0-.7s-.8-2-1.1-2.8c-.3-.8-.6-.7-.8-.7h-.7c-.2 0-.7.1-1.1.5s-1.4 1.4-1.4 3.4 1.4 3.9 1.6 4.1c.2.2 2.7 4.2 6.5 5.9.9.4 1.7.7 2.2.9.9.3 1.6.3 2.2.2.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/>
+            </svg>
+            WhatsApp
+          </a>
+
+          <!-- Email -->
+          <button onclick="openEmailForm(document.getElementById('overlayTitle').innerText)" 
+                  class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm8 7 8-5H4l8 5zm0 2-8-5v10h16V8l-8 5z"/>
+            </svg>
+            Email
+          </button>
+
+          <!-- Cart -->
+          <button id="addToCartBtn" 
+                  class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7zm0 16c-1.1 0-2 .9-2 2s.9 2 2 2c1.2 0 2-.9 2-2s-.8-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2c1.2 0 2-.9 2-2s-.9-2-2-2z"/>
+            </svg>
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- AUTH OVERLAY -->
-  <div id="authOverlay" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-lg font-bold mb-4">Login / Register</h2>
-      <form id="authForm" class="space-y-3">
-        <input type="email" id="authEmail" placeholder="Email" class="w-full border px-3 py-2 rounded" required>
-        <input type="password" id="authPassword" placeholder="Password" class="w-full border px-3 py-2 rounded" required>
-        <button type="submit" class="w-full bg-red-600 text-white py-2 rounded">Submit</button>
-      </form>
-      <button onclick="closeAuth()" class="mt-3 text-sm text-gray-500">Cancel</button>
-    </div>
-  </div>
+</div>
 
   <!-- Email Overlay (existing) -->
   <div id="emailOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -102,6 +182,57 @@
       </form>
     </div>
   </div>
+  <!-- Footer Section -->
+<footer class="bg-black text-gray-200 mt-10">
+  <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+    
+    <!-- Logo & Contact Info -->
+    <div>
+      <img src="images/sharkim_gold_logo.png" alt="Company Logo" class="h-14 mb-4">
+      <p class="mb-2">WhatsApp Us: <a href="https://wa.me/254704843554" class="text-[#ac8334] font-medium">+254 704 843 554</a></p>
+      <p class="mb-2">Call Us: <a href="tel:+254704843554" class="text-white font-medium">+254 704 843 554</a></p>
+      <p class="mb-2">Email Us: <a href="mailto:sharkimtraders97@gmail.com" class="text-[#ac8334] font-medium">sharkimtraders97@gmail.com</a></p>
+      <p class="text-sm text-gray-400">Time: 8:30AM - 6:30PM</p>
+    </div>
+
+    <!-- Categories -->
+    <div>
+      <h3 class="text-lg font-semibold mb-3 text-white">Categories</h3>
+      <ul class="space-y-2">
+        <li><a href="#" class="hover:text-[#ac8334]">Electronics</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Home Appliances</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Kitchen Appliances</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Computing & Accessories</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Small Kitchen Appliances</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Household Equipments</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Phones & Tablets</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Tools & DIY</a></li>
+        <li><a href="#" class="hover:text-[#ac8334]">Shoes</a></li>
+      </ul>
+    </div>
+
+    <!-- Working Hours -->
+    <div>
+      <h3 class="text-lg font-semibold mb-3 text-white">Working Hours</h3>
+      <p class="mb-1">Monday - Saturday: <span class="font-medium">08:30 - 18:30</span></p>
+      <p class="mb-1">Sunday: <span class="text-red-500">Closed</span></p>
+    </div>
+
+    <!-- Payments -->
+    <div>
+      <h3 class="text-lg font-semibold mb-3 text-white">Payments</h3>
+      <div class="flex space-x-3">
+<img src="/images/mpesa1.png" alt="MPESA" class="h-6">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bg-black text-[#ac8334] text-center py-3 mt-6">
+    <p class="text-sm">&copy; 2025 Sharkim Traders. All rights reserved.</p>
+  </div>
+</footer>
 
 <script>
 // =====================
@@ -112,13 +243,12 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =====================
-// ELEMENTS (existing in your HTML)
+// ELEMENTS
 // =====================
 const mainContent = document.getElementById("mainContent");
 const tabs = document.getElementById("categoryTabs");
 const searchInput = document.getElementById("searchInput");
 
-// Overlays that already exist in your HTML
 const productOverlay = document.getElementById("productOverlay");
 const overlayImage = document.getElementById("overlayImage");
 const overlayTitle = document.getElementById("overlayTitle");
@@ -132,15 +262,6 @@ const addToCartBtn = document.getElementById("addToCartBtn");
 const emailOverlay = document.getElementById("emailOverlay");
 const emailForm = document.getElementById("emailForm");
 
-// Auth bits
-const authBtn = document.getElementById("authBtn");
-const authOverlay = document.getElementById("authOverlay");
-const authForm = document.getElementById("authForm");
-const logoutBtn = document.getElementById("logoutBtn");
-const userSection = document.getElementById("userSection");
-const usernameEl = document.getElementById("username");
-
-// Optional cart button from your header (inside userSection)
 const cartBtn = document.getElementById("cartBtn");
 const cartCountBadge = document.getElementById("cartCount");
 
@@ -154,7 +275,6 @@ function updateCartCount() {
 }
 updateCartCount();
 
-// Create Cart Drawer dynamically if not present
 (function ensureCartDrawer(){
   if (document.getElementById("cartDrawer")) return;
   const drawer = document.createElement("div");
@@ -170,15 +290,19 @@ updateCartCount();
         <button id="cartEmail" class="bg-blue-600 text-white px-3 py-2 rounded w-1/2">Email</button>
       </div>
     </div>
-    <button id="cartClose" class="absolute top-2 right-2 text-red-600 font-bold">✖</button>
+    <button id="cartClose" class="absolute top-2 right-2 text-gray-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
   `;
   document.body.appendChild(drawer);
 
-  // attach handlers
   document.getElementById("cartClose").onclick = closeCart;
   document.getElementById("cartWhatsApp").onclick = checkoutWhatsApp;
   document.getElementById("cartEmail").onclick = checkoutEmail;
 })();
+
 function openCart() {
   renderCart();
   document.getElementById("cartDrawer").classList.remove("hidden");
@@ -192,7 +316,7 @@ function renderCart() {
   wrap.innerHTML = "";
   let total = 0;
   if (cart.length === 0) {
-    wrap.innerHTML = "<p class='text-gray-500'>Your cart is empty 🛒</p>";
+    wrap.innerHTML = "<p class='text-gray-500'>Your cart is empty</p>";
     totalEl.innerText = 0;
     return;
   }
@@ -206,7 +330,11 @@ function renderCart() {
         <p class="font-bold text-sm">${item.title}</p>
         <p class="text-xs text-gray-600">Ksh ${item.price}</p>
       </div>
-      <button class="text-red-600" aria-label="Remove">🗑</button>
+      <button class="text-red-600" aria-label="Remove">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 7V5a2 2 0 114 0v2" />
+        </svg>
+      </button>
     `;
     row.querySelector("button").onclick = () => {
       cart.splice(idx, 1);
@@ -218,146 +346,88 @@ function renderCart() {
   });
   totalEl.innerText = total;
 }
+
 function checkoutWhatsApp() {
   if (cart.length === 0) return alert("Your cart is empty!");
-  let msg = "Hello, I'd like to order:\n\n";
+
+  let msg = "🛒 *New Order from Sharkim Traders*\n\n";
   let total = 0;
-  cart.forEach(i => { msg += `- ${i.title} @ Ksh ${i.price}\n`; total += Number(i.price)||0; });
-  msg += `\nTotal: Ksh ${total}`;
-  window.open(`https://wa.me/254700000000?text=${encodeURIComponent(msg)}`, "_blank");
+
+  cart.forEach((item, index) => {
+    msg += `${index + 1}. ${item.title} - Ksh ${item.price}\n`;
+    total += Number(item.price) || 0;
+  });
+
+  msg += `\n----------------------\n💰 *Total:* Ksh ${total}\n\n`;
+  msg += "📍 Please confirm delivery details.";
+
+  // replace number with your business WhatsApp number
+  const phone = "+254704843554";
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
 }
+
 function checkoutEmail() {
   if (cart.length === 0) return alert("Your cart is empty!");
-  let subject = "Cart Order Request";
-  let body = "Hello,\nI'd like to order the following:\n\n";
+
+  let subject = "🛒 New Cart Order - Sharkim Traders";
+  let body = "Hello Sharkim Traders,\n\nI'd like to order the following products:\n\n";
   let total = 0;
-  cart.forEach(i => { body += `- ${i.title} @ Ksh ${i.price}\n`; total += Number(i.price)||0; });
-  body += `\nTotal: Ksh ${total}`;
+
+  cart.forEach((item, index) => {
+    body += `${index + 1}. ${item.title} - Ksh ${item.price}\n`;
+    total += Number(item.price) || 0;
+  });
+
+  body += `\n----------------------\nTotal: Ksh ${total}\n\n`;
+  body += "Customer details:\nName: __________\nPhone: __________\nLocation: __________";
+
   window.location.href = `mailto:sharkimtraders97@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
-// Attach header cart button if present
+
+
 if (cartBtn) cartBtn.onclick = openCart;
 
 // =====================
-// AUTH (login + signup in same overlay)
+// PRODUCTS
 // =====================
-// Inject a toggle for sign up / login if not present
-(function ensureAuthToggle(){
-  if (!authOverlay) return;
-  if (document.getElementById("authToggleLink")) return;
-  const toggle = document.createElement("button");
-  toggle.id = "authToggleLink";
-  toggle.type = "button";
-  toggle.className = "mt-3 text-sm text-blue-600 underline";
-  toggle.textContent = "Don't have an account? Create one";
-  authOverlay.querySelector(".bg-white").appendChild(toggle);
-})();
-let authMode = "login"; // or "signup"
-
-function openAuth() { if (authOverlay) authOverlay.classList.remove("hidden"); }
-function closeAuth() { if (authOverlay) authOverlay.classList.add("hidden"); }
-if (authBtn) authBtn.onclick = openAuth;
-const authToggleLink = document.getElementById("authToggleLink");
-if (authToggleLink) {
-  authToggleLink.onclick = () => {
-    authMode = authMode === "login" ? "signup" : "login";
-    if (authMode === "signup") {
-      authToggleLink.textContent = "Already have an account? Log in";
-    } else {
-      authToggleLink.textContent = "Don't have an account? Create one";
-    }
-  };
-}
-if (authForm) {
-  authForm.onsubmit = async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("authEmail").value.trim();
-    const password = document.getElementById("authPassword").value;
-
-    try {
-      if (authMode === "signup") {
-        // Simple signup: email/password; you can later add name capture and pass in user_metadata
-        const { data, error } = await client.auth.signUp({ email, password });
-        if (error) throw error;
-        alert("Signup successful. Please check your email to confirm, then log in.");
-        authMode = "login";
-        if (authToggleLink) authToggleLink.textContent = "Don't have an account? Create one";
-      } else {
-        const { data, error } = await client.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        location.reload();
-      }
-    } catch (err) {
-      alert(err.message || "Authentication error");
-    }
-  };
-}
-if (logoutBtn) {
-  logoutBtn.onclick = async () => {
-    await client.auth.signOut();
-    location.reload();
-  };
-}
-async function checkSession() {
-  const { data: { user } } = await client.auth.getUser();
-  if (user) {
-    if (authBtn) authBtn.classList.add("hidden");
-    if (userSection) userSection.classList.remove("hidden");
-
-    const displayName = (user.user_metadata && user.user_metadata.name)
-      ? user.user_metadata.name
-      : (user.email ? user.email.split("@")[0] : "User");
-    if (usernameEl) usernameEl.textContent = displayName;
-  }
-}
-checkSession();
-
-// =====================
-// PRODUCTS (keep your original UI & categories)
-// =====================
-const categories = [
-  "Electronics & Technology", "Computer Accessories", "Audio & Music Equipment",
-  "Cameras & Video Gear", "Security & Surveillance", "Printers & Scanners",
-  "Software & Games", "Laptops & Desktops", "TV & DVD Equipment",
-  "Video Game Consoles & Game", "Mobile Phones & Tablets", "Mobile Phones",
-  "Phone Accessories", "Tablets", "Smart Watches & Trackers",
-  "Fashion & Beauty", "Clothing & Accessories", "Shoes",
-  "Bags", "Jewelry", "Watches", "Wedding Wear & Accessories",
-  "Bath & Body, Makeup, Fragrance", "Hair & Skin Care", "Sexual Wellness",
-  "Babies & Kids: Clothing, Toys, Prams, Children’s Gear",
-  "Food, Agriculture & Farming", "Commercial Equipment & Tools",
-  "Repair & Construction"
-];
-
-const categoryContainers = {}; // id -> element
-
-// build category tabs + sections exactly like your original
-categories.forEach(cat => {
-  const btn = document.createElement("button");
-  btn.className = "px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600";
-  btn.innerText = cat;
-  btn.onclick = () => document.getElementById(cat)?.scrollIntoView({ behavior: 'smooth' });
-  tabs.appendChild(btn);
-
-  const section = document.createElement("section");
-  section.innerHTML = `
-    <h2 class="text-xl font-bold mb-4">${cat}</h2>
-    <div id="${cat}" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
-  `;
-  mainContent.appendChild(section);
-  categoryContainers[cat] = section.querySelector(`#${CSS.escape(cat)}`);
-});
-
-let allProducts = []; // cache for search/filter
+let categoryContainers = {};
+let allProducts = [];
 
 async function fetchProducts() {
   const { data, error } = await client.from('Products').select('*');
   if (error) { console.error("❌ Error fetching products:", error); return; }
   allProducts = data || [];
+  renderCategories(allProducts);
   renderProducts(allProducts);
 }
+
+function renderCategories(products) {
+  tabs.innerHTML = "";
+  categoryContainers = {};
+  const counts = {};
+  products.forEach(p => {
+    if (!counts[p.category]) counts[p.category] = 0;
+    counts[p.category]++;
+  });
+  const sorted = Object.keys(counts).sort((a,b) => counts[b]-counts[a]);
+  sorted.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600";
+    btn.innerText = `${cat} (${counts[cat]})`;
+    btn.onclick = () => document.getElementById(cat)?.scrollIntoView({ behavior: 'smooth' });
+    tabs.appendChild(btn);
+
+    const section = document.createElement("section");
+    section.innerHTML = `
+      <h2 class="text-xl font-bold mb-4">${cat}</h2>
+      <div id="${cat}" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+    `;
+    mainContent.appendChild(section);
+    categoryContainers[cat] = section.querySelector(`#${CSS.escape(cat)}`);
+  });
+}
+
 function renderProducts(products) {
-  // clear
   Object.values(categoryContainers).forEach(c => c.innerHTML = "");
   products.forEach(product => {
     const container = categoryContainers[product.category];
@@ -372,58 +442,91 @@ function renderProducts(products) {
       <p class="text-xs line-through text-gray-500">Ksh ${product.original_price}</p>
       <p class="text-red-600 font-bold">Ksh ${product.price}</p>
       <span class="bg-green-600 text-white text-xs px-2 py-1 rounded inline-block mt-1">${discount}% OFF</span>
+      
       <div class="mt-3 flex justify-center gap-2">
-        <a href="https://wa.me/254700000000?text=I want ${encodeURIComponent(product.title)}" target="_blank" class="px-3 py-1 bg-green-500 text-white rounded">WhatsApp</a>
-        <button class="px-3 py-1 bg-blue-500 text-white rounded">Email</button>
+        <!-- WhatsApp with Icon -->
+        <a href="https://wa.me/+254704843554?text=I want ${encodeURIComponent(product.title)}" 
+           target="_blank" 
+           class="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 32 32" fill="currentColor">
+            <path d="M16 .5C7.6.5.5 7.6.5 16c0 2.8.7 5.5 2.2 7.9L0 32l8.3-2.7c2.3 1.3 5 2 7.7 2 8.4 0 15.5-7.1 15.5-15.5S24.4.5 16 .5zM16 29c-2.4 0-4.8-.6-6.9-1.8l-.5-.3-4.9 1.6 1.6-4.8-.3-.5C3.6 21 3 18.6 3 16 3 9.4 9.4 3 16 3s13 6.4 13 13-6.4 13-13 13zm7.3-9.8c-.4-.2-2.3-1.1-2.6-1.2s-.6-.2-.8.2c-.2.4-1 1.2-1.2 1.4s-.4.3-.8.1c-.4-.2-1.6-.6-3-2-1.1-1.1-1.9-2.3-2.1-2.7s0-.6.2-.8.4-.4.6-.6c.2-.2.3-.4.4-.6.1-.2 0-.5 0-.7s-.8-2-1.1-2.8c-.3-.8-.6-.7-.8-.7h-.7c-.2 0-.7.1-1.1.5s-1.4 1.4-1.4 3.4 1.4 3.9 1.6 4.1c.2.2 2.7 4.2 6.5 5.9.9.4 1.7.7 2.2.9.9.3 1.6.3 2.2.2.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/>
+          </svg>
+          WhatsApp
+        </a>
+
+        <!-- Email with Icon -->
+        <button class="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm8 7 8-5H4l8 5zm0 2-8-5v10h16V8l-8 5z"/>
+          </svg>
+          Email
+        </button>
       </div>
     `;
-    // product overlay on click (outside buttons)
-    card.addEventListener("click", (e)=>{
-      // avoid triggering when clicking whatsapp/email buttons
-      if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
+
+    // Prevent overlay if clicking buttons/links
+    card.addEventListener("click", (e)=> {
+      if (e.target.closest("a") || e.target.closest("button")) return;
       openOverlay(product);
     });
-    // email button
-    card.querySelector("button").onclick = () => openEmailForm(product.title);
 
+    card.querySelector("button").onclick = () => openEmailForm(product.title);
     container.appendChild(card);
   });
 }
+
 fetchProducts();
 
-// search filter (title/category/subcategory)
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     const q = searchInput.value.trim().toLowerCase();
-    if (!q) return renderProducts(allProducts);
+
+    // If search is empty -> show all
+    if (!q) {
+      mainContent.innerHTML = "";
+      renderCategories(allProducts);
+      renderProducts(allProducts);
+      return;
+    }
+
+    // Filter products
     const filtered = allProducts.filter(p =>
-      (p.title||"").toLowerCase().includes(q) ||
-      (p.category||"").toLowerCase().includes(q) ||
-      (p.subcategory||"").toLowerCase().includes(q)
+      (p.title || "").toLowerCase().includes(q) ||
+      (p.category || "").toLowerCase().includes(q) ||
+      (p.subcategory || "").toLowerCase().includes(q)
     );
+
+    mainContent.innerHTML = ""; // clear first
+
+    if (filtered.length === 0) {
+      // Show "Not available" message
+      const msg = document.createElement("p");
+      msg.className = "text-center text-gray-600 mt-6 text-lg font-medium";
+      msg.innerText = "❌ Item not available";
+      mainContent.appendChild(msg);
+      return;
+    }
+
+    // Only render categories that matched
+    renderCategories(filtered);
     renderProducts(filtered);
   });
 }
 
 // =====================
-// PRODUCT OVERLAY + EMAIL OVERLAY
+// PRODUCT OVERLAY + EMAIL
 // =====================
 function openOverlay(product) {
   overlayImage.src = product.image_url;
   overlayTitle.innerText = product.title;
-  overlayCategory.innerText = `${product.category} ${product.subcategory ? "→ " + product.subcategory : ""}`;
+  overlayCategory.innerText = product.category;
+  overlayDescription.innerText = product.subcategory || "No description available";
   overlayOriginal.innerText = product.original_price;
   overlayPrice.innerText = product.price;
   overlayDiscount.innerText = Math.round(((product.original_price - product.price) / product.original_price) * 100);
   overlayWhatsapp.href = `https://wa.me/254700000000?text=${encodeURIComponent("I want " + product.title)}`;
 
-  // Add to cart requires login
-  addToCartBtn.onclick = async () => {
-    const { data: { user } } = await client.auth.getUser();
-    if (!user) {
-      openAuth();
-      return;
-    }
+  addToCartBtn.onclick = () => {
     cart.push({
       id: product.id,
       title: product.title,
@@ -437,10 +540,10 @@ function openOverlay(product) {
 
   productOverlay.classList.remove("hidden");
 }
-function closeOverlay(){ productOverlay.classList.add("hidden"); }
-window.closeOverlay = closeOverlay; // keep your inline onclick working
 
-// Your existing email logic preserved
+function closeOverlay(){ productOverlay.classList.add("hidden"); }
+window.closeOverlay = closeOverlay;
+
 function openEmailForm(productTitle) {
   emailOverlay.classList.remove("hidden");
   const message = `I want ${productTitle}`;
@@ -450,6 +553,7 @@ function openEmailForm(productTitle) {
 document.getElementById("cancelEmail").onclick = function() {
   emailOverlay.classList.add("hidden");
 };
+
 emailForm.onsubmit = function(e) {
   e.preventDefault();
   const name = document.getElementById("name").value;
@@ -465,3 +569,4 @@ emailForm.onsubmit = function(e) {
 
 </body>
 </html>
+
