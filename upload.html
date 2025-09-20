@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="logo.png">
-
+  <link rel="icon" type="image/png" href="/images/icon logo.png">
   <title>Upload Product - Sharkim Traders</title>
 
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
+   <style>
+    body {
+      font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 p-6">
 
@@ -65,9 +68,9 @@
         <option>Repair & Construction</option>
       </select>
 
-      <!-- Subcategory -->
-      <input type="text" id="subcategory" placeholder="Subcategory (optional)"
-             class="w-full px-4 py-2 border rounded">
+      <!-- Description (keeps subcategory id for DB/JS compatibility) -->
+      <textarea id="subcategory" placeholder="Product Description"
+                class="w-full px-4 py-2 border rounded h-28"></textarea>
 
       <!-- Image Upload -->
       <input type="file" id="image" accept="image/*"
@@ -85,9 +88,9 @@
 
   <script>
     window.onload = () => {
-    const supabaseUrl = "https://evmiakneqtoxvnzeiwlz.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc"; 
-    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+      const supabaseUrl = "https://evmiakneqtoxvnzeiwlz.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc"; 
+      const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       const statusText = document.getElementById('status');
 
@@ -107,7 +110,7 @@
         const price = parseFloat(document.getElementById('price').value);
         const originalPrice = parseFloat(document.getElementById('originalPrice').value);
         const category = document.getElementById('category').value;
-        const subcategory = document.getElementById('subcategory').value.trim();
+        const subcategory = document.getElementById('subcategory').value.trim(); // now holds description text
         const imageFile = document.getElementById('image').files[0];
 
         if (!imageFile) {
@@ -143,7 +146,7 @@
               original_price: originalPrice,
               image_url: imageUrl,
               category,
-              subcategory
+              subcategory // still mapped correctly
             }]);
 
           if (insertError) {
