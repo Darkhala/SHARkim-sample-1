@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/images/icon logo.png">
+  <title>Shop - Sharkim Traders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Minimal Header: Logo top-left, Cart top-right, Nav centered -->
+<header class="bg-black text-white py-4">
+  <div class="max-w-7xl mx-auto px-3">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="images/sharkim_gold_logo.png" class="h-12" alt="logo">
+      </a>
+      <button id="cartBtn" class="flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7z"/></svg>
+        Cart
+        <span id="cartCount" class="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+      </button>
+    </div>
+    <nav class="mt-3">
+      <ul class="flex justify-center gap-6 text-sm">
+        <li>
+          <a href="index.html" class="flex items-center gap-2 hover:text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3l9-8z"/></svg>
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="shop.html" class="flex items-center gap-2 hover:text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7z"/></svg>
+            Shop
+          </a>
+        </li>
+        <li>
+          <a href="contact.html" class="flex items-center gap-2 hover:text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21 8V7l-3 2-2-1-4 2-4-2-4 2v10h20V8zM5 17v-6l3-1.5 4 2 4-2 3 1.5V17H5zm7-11l4 2 5-3-9-4-9 4 5 3 4-2z"/></svg>
+            Contact
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-4">
+  <!-- Filters -->
+  <aside class="md:col-span-3 bg-white rounded shadow p-4 space-y-4 h-fit">
+    <h2 class="text-xl font-semibold mb-2">Filters</h2>
+
+    <div>
+      <label class="text-sm block mb-1">Search</label>
+      <input id="fSearch" type="text" placeholder="Search products..." class="w-full px-3 py-2 border rounded">
+    </div>
+
+    <div>
+      <label class="text-sm block mb-1">Category</label>
+      <select id="fMain" class="w-full px-3 py-2 border rounded"></select>
+    </div>
+
+    <div>
+      <label class="text-sm block mb-1">Subcategory</label>
+      <select id="fSub" class="w-full px-3 py-2 border rounded" disabled></select>
+    </div>
+
+    <div>
+      <label class="text-sm block mb-1">Price Range (KES)</label>
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <label class="flex items-center gap-2"><input type="radio" name="price" value="0-1000"> 0 - 1k</label>
+        <label class="flex items-center gap-2"><input type="radio" name="price" value="1000-3000"> 1k - 3k</label>
+        <label class="flex items-center gap-2"><input type="radio" name="price" value="3000-5000"> 3k - 5k</label>
+        <label class="flex items-center gap-2"><input type="radio" name="price" value="5000-10000"> 5k - 10k</label>
+        <label class="flex items-center gap-2"><input type="radio" name="price" value="10000-20000"> 10k - 20k</label>
+        <label class="flex items-center gap-2"><input type="radio" name="price" value="20000-1000000"> 20k+</label>
+      </div>
+    </div>
+
+    <div>
+      <label class="text-sm block mb-1">Sort By</label>
+      <select id="fSort" class="w-full px-3 py-2 border rounded">
+        <option value="">None</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="text-sm block mb-1">Brands</label>
+      <div id="brandBox" class="max-h-56 overflow-auto border rounded p-2 text-sm space-y-1">
+        <!-- dynamically populated with unique brands for current filter scope -->
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button id="applyBtn" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded">Apply</button>
+      <button id="clearBtn" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded">Clear</button>
+    </div>
+  </aside>
+
+  <!-- Products grid -->
+  <section class="md:col-span-9">
+    <div class="flex items-center justify-between mb-3">
+      <h2 id="listTitle" class="text-xl font-semibold">Our Shop</h2>
+      <div class="text-sm text-gray-600"><span id="count">0</span> item(s)</div>
+    </div>
+    <div id="grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+  </section>
+</main>
+
+<script src="js/categories.js"></script>
+<script>
+const SUPABASE_URL = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc';
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const fSearch = document.getElementById('fSearch');
+const fMain = document.getElementById('fMain');
+const fSub = document.getElementById('fSub');
+const brandBox = document.getElementById('brandBox');
+const fSort = document.getElementById('fSort');
+const countEl = document.getElementById('count');
+const grid = document.getElementById('grid');
+const listTitle = document.getElementById('listTitle');
+const cartBtn = document.getElementById('cartBtn');
+const cartCountBadge = document.getElementById('cartCount');
+
+let all = [];
+let view = [];
+
+// Cart
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+function saveCart(){ localStorage.setItem('cart', JSON.stringify(cart)); }
+function updateCartCount(){ if (cartCountBadge) cartCountBadge.innerText = cart.length; }
+updateCartCount();
+
+(function ensureCartDrawer(){
+  if (document.getElementById('cartDrawer')) return;
+  const drawer = document.createElement('div');
+  drawer.id = 'cartDrawer';
+  drawer.className = 'fixed top-0 right-0 w-80 max-w-full h-full bg-white shadow-lg p-4 hidden z-50';
+  drawer.innerHTML = `
+    <h2 class=\"text-lg font-bold mb-4\">Your Cart</h2>
+    <div id=\"cartItems\" class=\"space-y-3\"></div>
+    <div class=\"mt-4 border-t pt-3\">
+      <p class=\"font-bold\">Total: Ksh <span id=\"cartTotal\">0</span></p>
+      <div class=\"flex gap-2 mt-3\">
+        <button id=\"cartWhatsApp\" class=\"bg-green-600 text-white px-3 py-2 rounded w-1/2\">WhatsApp</button>
+        <button id=\"cartEmail\" class=\"bg-blue-600 text-white px-3 py-2 rounded w-1/2\">Email</button>
+      </div>
+    </div>
+    <button id=\"cartClose\" class=\"absolute top-2 right-2 text-gray-500\">
+      <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">
+        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" />
+      </svg>
+    </button>
+  `;
+  document.body.appendChild(drawer);
+  document.getElementById('cartClose').onclick = closeCart;
+  document.getElementById('cartWhatsApp').onclick = checkoutWhatsApp;
+  document.getElementById('cartEmail').onclick = checkoutEmail;
+})();
+
+function openCart(){ renderCart(); document.getElementById('cartDrawer').classList.remove('hidden'); }
+function closeCart(){ document.getElementById('cartDrawer').classList.add('hidden'); }
+function renderCart(){
+  const wrap = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  wrap.innerHTML = '';
+  let total = 0;
+  if (cart.length === 0) { wrap.innerHTML = "<p class='text-gray-500'>Your cart is empty</p>"; totalEl.innerText = 0; return; }
+  cart.forEach((item, idx) => {
+    total += Number(item.price) || 0;
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-center border-b pb-2';
+    row.innerHTML = `
+      <img src=\"${item.image_url}\" alt=\"${item.title}\" class=\"w-12 h-12 object-contain\">
+      <div class=\"flex-1\">
+        <p class=\"font-bold text-sm\">${item.title}</p>
+        <p class=\"text-xs text-gray-600\">Ksh ${item.price}</p>
+      </div>
+      <button class=\"text-red-600\" aria-label=\"Remove\">
+        <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">
+          <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 7V5a2 2 0 114 0v2\" />
+        </svg>
+      </button>
+    `;
+    row.querySelector('button').onclick = () => { cart.splice(idx, 1); saveCart(); updateCartCount(); renderCart(); };
+    wrap.appendChild(row);
+  });
+  totalEl.innerText = total;
+}
+
+function checkoutWhatsApp(){
+  if (cart.length === 0) return alert('Your cart is empty!');
+  let msg = '🛒 *New Order from Sharkim Traders*\n\n';
+  let total = 0; cart.forEach((item, i) => { msg += `${i+1}. ${item.title} - Ksh ${item.price}\n`; total += Number(item.price)||0; });
+  msg += `\n----------------------\n💰 *Total:* Ksh ${total}\n\n`;
+  msg += '📍 Please confirm delivery details.';
+  window.open(`https://wa.me/+254704843554?text=${encodeURIComponent(msg)}`, '_blank');
+}
+function checkoutEmail(){
+  if (cart.length === 0) return alert('Your cart is empty!');
+  let subject = '🛒 New Cart Order - Sharkim Traders';
+  let body = 'Hello Sharkim Traders,\n\nI\'d like to order the following products:\n\n';
+  let total = 0; cart.forEach((item, i) => { body += `${i+1}. ${item.title} - Ksh ${item.price}\n`; total += Number(item.price)||0; });
+  body += `\n----------------------\nTotal: Ksh ${total}\n\n`;
+  body += 'Customer details:\nName: __________\nPhone: __________\nLocation: __________';
+  window.location.href = `mailto:sharkimtraders97@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+if (cartBtn) cartBtn.onclick = openCart;
+
+function qs(){ return new URLSearchParams(window.location.search); }
+function setQS(params){ const url = new URL(window.location.href); url.search = params.toString(); window.history.replaceState({}, '', url.toString()); }
+
+function initFiltersFromQS(){
+  const p = qs();
+  fSearch.value = p.get('q') || '';
+  const main = p.get('main') || '';
+  populateMain(main);
+  const sub = p.get('sub') || '';
+  populateSub(main, sub);
+  const sort = p.get('sort') || '';
+  fSort.value = sort;
+  const price = p.get('price');
+  if (price){ const r = document.querySelector(`input[name=\"price\"][value=\"${price}\"]`); if (r) r.checked = true; }
+}
+
+function populateMain(selected=''){
+  fMain.innerHTML = '<option value="">All</option>' + MAIN_CATEGORIES.map(c => `<option ${selected===c?'selected':''} value="${c}">${c}</option>`).join('');
+}
+function populateSub(main, selected=''){
+  const subs = main ? getSubcategories(main) : [];
+  if (subs.length === 0){ fSub.innerHTML = '<option value="">All</option>'; fSub.disabled = true; return; }
+  fSub.innerHTML = '<option value="">All</option>' + subs.map(s => `<option ${selected===s?'selected':''} value="${s}">${s}</option>`).join('');
+  fSub.disabled = false;
+}
+
+function uniqueBrands(list){ return Array.from(new Set(list.map(p => (p.brand||'').trim()).filter(Boolean))).sort(); }
+function renderBrands(list){
+  const brands = uniqueBrands(list);
+  const p = qs();
+  const active = new Set((p.get('brands')||'').split(',').filter(Boolean));
+  brandBox.innerHTML = brands.map(b => `
+    <label class="flex items-center gap-2">
+      <input type="checkbox" value="${b}" ${active.has(b)?'checked':''}> ${b}
+    </label>
+  `).join('');
+}
+
+async function fetchAll(){
+  const { data, error } = await client.from('Products').select('*').order('id', { ascending: false });
+  if (error){ console.error(error); return; }
+  all = (data||[]).map(p => ({
+    ...p,
+    main_category: p.main_category || p.category || 'Uncategorized',
+    description: p.description || p.subcategory || ''
+  }));
+  filterAndRender();
+}
+
+function filterAndRender(){
+  const p = qs();
+  const q = (p.get('q')||'').toLowerCase();
+  const main = p.get('main') || '';
+  const sub = p.get('sub') || '';
+  const sort = p.get('sort') || '';
+  const price = p.get('price') || '';
+  const brandParam = (p.get('brands')||'').split(',').filter(Boolean);
+
+  view = all.filter(item => {
+    if (q && !(`${item.title} ${item.main_category} ${item.subcategory} ${item.brand||''}`.toLowerCase().includes(q))) return false;
+    if (main && (item.main_category !== main)) return false;
+    if (sub && (item.subcategory !== sub)) return false;
+    if (brandParam.length && !brandParam.includes((item.brand||'').trim())) return false;
+    if (price){
+      const [min,max] = price.split('-').map(Number);
+      const pp = Number(item.price)||0;
+      if (pp < min || pp > max) return false;
+    }
+    return true;
+  });
+
+  if (sort === 'price_asc') view.sort((a,b)=> (a.price||0) - (b.price||0));
+  else if (sort === 'price_desc') view.sort((a,b)=> (b.price||0) - (a.price||0));
+  else if (sort === 'newest') view.sort((a,b)=> (b.id||0) - (a.id||0));
+
+  grid.innerHTML = '';
+  if (view.length === 0){ grid.innerHTML = '<p class="text-gray-600">No items found.</p>'; }
+  view.forEach(p => grid.appendChild(renderCard(p)));
+  countEl.textContent = view.length;
+  listTitle.textContent = main ? main : 'Our Shop';
+  renderBrands(view.length ? view : all);
+}
+
+function renderCard(product){
+  const discount = (product.original_price && product.original_price>0)
+    ? Math.round(((product.original_price - product.price)/product.original_price)*100)
+    : 0;
+  const el = document.createElement('div');
+  el.className = 'bg-white border rounded shadow p-3 flex flex-col';
+  el.innerHTML = `
+    <a href=\"product.html?id=${encodeURIComponent(product.id)}\" class=\"block\">
+      <img src=\"${product.image_url}\" alt=\"${product.title}\" class=\"h-40 w-full object-contain rounded mb-2\">
+      <h3 class=\"text-sm font-semibold line-clamp-2\">${product.title}</h3>
+    </a>
+    <div class=\"mt-1\">
+      <p class=\"text-xs line-through text-gray-500\">${product.original_price ? 'Ksh '+product.original_price : ''}</p>
+      <p class=\"text-red-600 font-bold\">Ksh ${product.price}</p>
+      ${discount?`<span class=\"bg-green-600 text-white text-xs px-2 py-0.5 rounded inline-block mt-1\">${discount}% OFF</span>`:''}
+    </div>
+    <div class=\"mt-2 flex gap-2\">
+      <button class=\"flex-1 bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700\" data-add> Add to Cart </button>
+      <a class=\"flex-1 bg-green-600 text-white text-sm py-1.5 rounded text-center hover:bg-green-700\" target=\"_blank\" href=\"https://wa.me/254704843554?text=${encodeURIComponent('I want ' + product.title)}\">WhatsApp</a>
+    </div>`;
+  el.querySelector('[data-add]').onclick = () => { cart.push({ id: product.id, title: product.title, price: product.price, image_url: product.image_url }); saveCart(); updateCartCount(); };
+  return el;
+}
+
+// Events
+fMain.addEventListener('change', () => { populateSub(fMain.value, ''); const p = qs(); p.set('main', fMain.value); p.delete('sub'); setQS(p); filterAndRender(); });
+fSub.addEventListener('change', () => { const p = qs(); if (fSub.value) p.set('sub', fSub.value); else p.delete('sub'); setQS(p); filterAndRender(); });
+document.getElementById('applyBtn').addEventListener('click', () => {
+  const p = qs();
+  const q = (fSearch.value||'').trim();
+  if (q) p.set('q', q); else p.delete('q');
+  if (fSort.value) p.set('sort', fSort.value); else p.delete('sort');
+  const pr = document.querySelector('input[name=\"price\"]:checked');
+  if (pr) p.set('price', pr.value); else p.delete('price');
+  const selectedBrands = Array.from(brandBox.querySelectorAll('input[type=\"checkbox\"]:checked')).map(i=>i.value);
+  if (selectedBrands.length) p.set('brands', selectedBrands.join(',')); else p.delete('brands');
+  setQS(p);
+  filterAndRender();
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  const p = new URLSearchParams();
+  setQS(p);
+  fSearch.value = '';
+  populateMain('');
+  populateSub('', '');
+  document.querySelectorAll('input[name=\"price\"]').forEach(i => i.checked = false);
+  fSort.value = '';
+  fetchAll();
+});
+
+fMain.addEventListener('input', () => populateSub(fMain.value, ''));
+
+// Init
+initFiltersFromQS();
+fetchAll();
+</script>
+</body>
+</html>

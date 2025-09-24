@@ -8,84 +8,54 @@
 
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
-   <style>
-    body {
-      font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif;
-    }
+  <style>
+    body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
   </style>
 </head>
 <body class="bg-gray-100 p-6">
-
   <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
     <h2 class="text-2xl font-bold mb-6">Upload Product</h2>
 
     <form id="uploadForm" class="space-y-4">
       <!-- Product Title -->
-      <input type="text" id="title" placeholder="Product Title"
-             class="w-full px-4 py-2 border rounded" required>
+      <input type="text" id="title" placeholder="Product Title" class="w-full px-4 py-2 border rounded" required>
 
       <!-- Prices -->
-      <div class="flex gap-4">
-        <input type="number" id="price" placeholder="New Price (Ksh)"
-               class="w-full px-4 py-2 border rounded" required>
-        <input type="number" id="originalPrice" placeholder="Original Price (Ksh)"
-               class="w-full px-4 py-2 border rounded" required>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="number" id="price" placeholder="New Price (Ksh)" class="w-full px-4 py-2 border rounded" required>
+        <input type="number" id="originalPrice" placeholder="Original Price (Ksh)" class="w-full px-4 py-2 border rounded" required>
       </div>
 
-      <!-- Category -->
-      <select id="category" class="w-full px-4 py-2 border rounded" required>
-        <option value="">-- Select Category --</option>
-        <option>Electronics & Technology</option>
-        <option>Computer Accessories</option>
-        <option>Audio & Music Equipment</option>
-        <option>Cameras & Video Gear</option>
-        <option>Security & Surveillance</option>
-        <option>Printers & Scanners</option>
-        <option>Software & Games</option>
-        <option>Laptops & Desktops</option>
-        <option>TV & DVD Equipment</option>
-        <option>Video Game Consoles & Game</option>
-        <option>Mobile Phones & Tablets</option>
-        <option>Mobile Phones</option>
-        <option>Phone Accessories</option>
-        <option>Tablets</option>
-        <option>Smart Watches & Trackers</option>
-        <option>Fashion & Beauty</option>
-        <option>Clothing & Accessories</option>
-        <option>Shoes</option>
-        <option>Bags</option>
-        <option>Jewelry</option>
-        <option>Watches</option>
-        <option>Wedding Wear & Accessories</option>
-        <option>Bath & Body, Makeup, Fragrance</option>
-        <option>Hair & Skin Care</option>
-        <option>Sexual Wellness</option>
-        <option>Babies & Kids: Clothing, Toys, Prams, Children’s Gear</option>
-        <option>Food, Agriculture & Farming</option>
-        <option>Commercial Equipment & Tools</option>
-        <option>Repair & Construction</option>
-      </select>
+      <!-- Category selectors -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Main Category</label>
+          <select id="mainCategory" class="w-full px-4 py-2 border rounded" required></select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Subcategory</label>
+          <select id="subcategory" class="w-full px-4 py-2 border rounded" required disabled></select>
+        </div>
+      </div>
 
-      <!-- Description (keeps subcategory id for DB/JS compatibility) -->
-      <textarea id="subcategory" placeholder="Product Description"
-                class="w-full px-4 py-2 border rounded h-28"></textarea>
+      <!-- Brand -->
+      <input type="text" id="brand" placeholder="Brand (e.g., Samsung, HP)" class="w-full px-4 py-2 border rounded">
+
+      <!-- Description -->
+      <textarea id="description" placeholder="Product Description" class="w-full px-4 py-2 border rounded h-28"></textarea>
 
       <!-- Image Upload -->
-      <input type="file" id="image" accept="image/*"
-             class="w-full px-4 py-2 border rounded" required>
+      <input type="file" id="image" accept="image/*" class="w-full px-4 py-2 border rounded" required>
 
       <!-- Submit Button -->
-      <button type="submit"
-              class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded">
-        Upload
-      </button>
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded">Upload</button>
     </form>
 
     <p id="status" class="mt-4 text-sm text-gray-700"></p>
   </div>
 
+  <script src="js/categories.js"></script>
   <script>
     window.onload = () => {
       const supabaseUrl = "https://evmiakneqtoxvnzeiwlz.supabase.co";
@@ -93,15 +63,28 @@
       const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       const statusText = document.getElementById('status');
+      const mainCategory = document.getElementById('mainCategory');
+      const subcategory = document.getElementById('subcategory');
+      const description = document.getElementById('description');
+      const brand = document.getElementById('brand');
 
-      // ✅ Redirect if not logged in
-      client.auth.getUser().then(({ data: { user } }) => {
-        if (!user) {
-          window.location.href = "login.html";
-        }
-      });
+      // Auth guard
+      client.auth.getUser().then(({ data: { user } }) => { if (!user) window.location.href = "login.html"; });
 
-      // ✅ Handle Form Submission
+      // Populate categories
+      function populateMain(selected=''){
+        mainCategory.innerHTML = '<option value="">-- Select Main Category --</option>' + MAIN_CATEGORIES.map(c => `<option ${selected===c?'selected':''} value="${c}">${c}</option>`).join('');
+      }
+      function populateSub(main, selected=''){
+        const subs = main ? getSubcategories(main) : [];
+        if (!subs.length){ subcategory.innerHTML = '<option value="">-- Select Subcategory --</option>'; subcategory.disabled = true; return; }
+        subcategory.innerHTML = '<option value="">-- Select Subcategory --</option>' + subs.map(s => `<option ${selected===s?'selected':''} value="${s}">${s}</option>`).join('');
+        subcategory.disabled = false;
+      }
+      populateMain('');
+      mainCategory.addEventListener('change', () => populateSub(mainCategory.value, ''));
+
+      // Submit
       document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         statusText.textContent = 'Uploading...';
@@ -109,59 +92,40 @@
         const title = document.getElementById('title').value.trim();
         const price = parseFloat(document.getElementById('price').value);
         const originalPrice = parseFloat(document.getElementById('originalPrice').value);
-        const category = document.getElementById('category').value;
-        const subcategory = document.getElementById('subcategory').value.trim(); // now holds description text
+        const mainCat = mainCategory.value;
+        const subCat = subcategory.value;
+        const desc = description.value.trim();
+        const brandVal = brand.value.trim();
         const imageFile = document.getElementById('image').files[0];
-
-        if (!imageFile) {
-          statusText.textContent = '❌ No image selected.';
-          return;
-        }
+        if (!imageFile) { statusText.textContent = '❌ No image selected.'; return; }
 
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
 
         try {
-          // ✅ Upload image
-          const { data: imageUpload, error: uploadError } = await client
-            .storage
-            .from('product-images')
-            .upload(filePath, imageFile);
-
-          if (uploadError) {
-            console.error('❌ Image Upload Error:', uploadError.message);
-            statusText.textContent = '❌ Upload failed: ' + uploadError.message;
-            return;
-          }
-
+          const { error: uploadError } = await client.storage.from('product-images').upload(filePath, imageFile);
+          if (uploadError) { statusText.textContent = '❌ Upload failed: ' + uploadError.message; return; }
           const imageUrl = `${supabaseUrl}/storage/v1/object/public/product-images/${filePath}`;
 
-          // ✅ Insert product into DB
-          const { error: insertError } = await client
-            .from('Products')
-            .insert([{
-              title,
-              price,
-              original_price: originalPrice,
-              image_url: imageUrl,
-              category,
-              subcategory // still mapped correctly
-            }]);
+          const { error: insertError } = await client.from('Products').insert([{
+            title,
+            price,
+            original_price: originalPrice,
+            image_url: imageUrl,
+            // legacy field for backward compatibility
+            category: mainCat,
+            main_category: mainCat,
+            subcategory: subCat,
+            brand: brandVal || null,
+            description: desc || null
+          }]);
 
-          if (insertError) {
-            console.error('❌ Database Insert Error:', insertError.message);
-            statusText.textContent = '❌ Database error: ' + insertError.message;
-          } else {
-            statusText.textContent = '✅ Product uploaded successfully!';
-            document.getElementById('uploadForm').reset();
-          }
-
+          if (insertError) { statusText.textContent = '❌ Database error: ' + insertError.message; }
+          else { statusText.textContent = '✅ Product uploaded successfully!'; document.getElementById('uploadForm').reset(); subcategory.disabled = true; }
         } catch (err) {
-          console.error('❌ Unexpected Error:', err);
           statusText.textContent = '❌ Unexpected error: ' + err.message;
         }
-
         statusText.scrollIntoView({ behavior: 'smooth' });
       });
     };
