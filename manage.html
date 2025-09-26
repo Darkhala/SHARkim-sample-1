@@ -64,70 +64,75 @@
   </div>
 
   <!-- Edit Modal -->
-  <div id="editModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-    <div class="bg-white w-full max-w-2xl rounded shadow p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-semibold">Edit Product</h3>
-        <button id="closeEditModal" class="text-gray-500 hover:text-black">x</button>
+<div id="editModal" class="fixed inset-0 bg-black/50 hidden z-50 flex justify-center overflow-y-auto">
+  <div class="bg-white w-full max-w-2xl rounded shadow p-6 mt-10 mb-10 overflow-y-auto max-h-[90vh]">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-semibold">Edit Product</h3>
+      <button id="closeEditModal" class="text-gray-500 hover:text-black">x</button>
+    </div>
+
+    <form id="editForm" class="space-y-4">
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Title</label>
+        <input id="editTitle" type="text" class="w-full px-3 py-2 border rounded" required />
       </div>
 
-      <form id="editForm" class="space-y-4">
-        <!-- Title -->
+      <!-- Prices -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Title</label>
-          <input id="editTitle" type="text" class="w-full px-3 py-2 border rounded" required />
-        </div>
-
-        <!-- Prices -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">New Price (Ksh)</label>
-            <input id="editPrice" type="number" step="0.01" class="w-full px-3 py-2 border rounded" required />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Original Price (Ksh)</label>
-            <input id="editOriginalPrice" type="number" step="0.01" class="w-full px-3 py-2 border rounded" required />
-          </div>
-        </div>
-
-        <!-- Main/Sub Category -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Main Category</label>
-          <select id="editCategory" class="w-full px-3 py-2 border rounded" required></select>
+          <label class="block text-sm font-medium text-gray-700">New Price (Ksh)</label>
+          <input id="editPrice" type="number" step="0.01" class="w-full px-3 py-2 border rounded" required />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700">Subcategory</label>
-          <select id="editSubcategory" class="w-full px-3 py-2 border rounded"></select>
+          <label class="block text-sm font-medium text-gray-700">Original Price (Ksh)</label>
+          <input id="editOriginalPrice" type="number" step="0.01" class="w-full px-3 py-2 border rounded" required />
         </div>
+      </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Brand</label>
-          <input id="editBrand" type="text" class="w-full px-3 py-2 border rounded" />
-        </div>
+      <!-- Main/Sub Category -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Main Category</label>
+        <select id="editCategory" class="w-full px-3 py-2 border rounded" required></select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Subcategory</label>
+        <select id="editSubcategory" class="w-full px-3 py-2 border rounded"></select>
+      </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Description</label>
-          <textarea id="editDescription" class="w-full px-3 py-2 border rounded h-28" placeholder="Product Description"></textarea>
-        </div>
+      <!-- Brand -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Brand</label>
+        <input id="editBrand" type="text" class="w-full px-3 py-2 border rounded" />
+      </div>
 
-        <!-- Image Replace -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Product Image</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="editImagePreview" src="" alt="Preview" class="h-20 w-20 object-cover rounded border" />
-            <span class="text-xs text-gray-500">Leave empty to keep current image</span>
-          </div>
-          <input id="editImage" type="file" accept="image/*" class="w-full px-3 py-2 border rounded" />
-        </div>
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea id="editDescription" class="w-full px-3 py-2 border rounded h-28" placeholder="Product Description"></textarea>
+      </div>
 
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" id="cancelEdit" class="px-4 py-2 border rounded">Cancel</button>
-          <button id="saveBtn" type="submit" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded">Save</button>
+      <!-- Image Replace -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Product Image</label>
+        <div class="flex items-center gap-3 mb-2">
+          <img id="editImagePreview" src="" alt="Preview" class="h-20 w-20 object-cover rounded border" />
+          <span class="text-xs text-gray-500">Leave empty to keep current image</span>
         </div>
-      </form>
-      <p id="editStatus" class="mt-2 text-sm"></p>
-    </div>
+        <input id="editImage" type="file" accept="image/*" class="w-full px-3 py-2 border rounded" />
+      </div>
+
+      <!-- Buttons -->
+      <div class="pt-2 flex justify-end gap-2">
+        <button type="button" id="cancelEdit" class="px-4 py-2 border rounded">Cancel</button>
+        <button id="saveBtn" type="submit" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded">Save</button>
+      </div>
+    </form>
+
+    <p id="editStatus" class="mt-2 text-sm"></p>
   </div>
+</div>
+
 
   <script>
     const supabaseUrl = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
