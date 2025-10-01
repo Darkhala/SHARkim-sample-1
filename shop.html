@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="/images/icon logo.png">
   <title>Shop - Sharkim Traders</title>
+  <meta name="description" content="Browse and filter a wide selection of electronics and appliances at Sharkim Traders. Great prices and reliable delivery.">
+  <link rel="canonical" href="/shop.html">
+  <meta property="og:title" content="Shop - Sharkim Traders">
+  <meta property="og:description" content="Browse electronics and appliances at great prices.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/images/sharkim_gold_logo.png">
+  <meta property="og:url" content="/shop.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Shop - Sharkim Traders">
+  <meta name="twitter:description" content="Browse electronics and appliances at great prices.">
+  <meta name="twitter:image" content="/images/sharkim_gold_logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <style>
@@ -38,6 +49,18 @@
           <a href="shop.html" class="flex items-center gap-2 hover:text-yellow-400">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7z"/></svg>
             Shop
+          </a>
+        </li>
+        <li>
+          <a href="about.html" class="flex items-center gap-2 hover:text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            About
+          </a>
+        </li>
+        <li>
+          <a href="faq.html" class="flex items-center gap-2 hover:text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm1 15h-2v-2h2v2zm2.07-7.75c-.9.65-1.07 1.09-1.07 1.75h-2c0-1.6 1.04-2.45 1.86-3.03.74-.51 1.14-.85 1.14-1.47 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5H9c0-1.93 1.57-3.5 3.5-3.5S16 4.57 16 6.5c0 1.55-1.15 2.3-1.93 2.75z"/></svg>
+            FAQ
           </a>
         </li>
         <li>
@@ -116,6 +139,7 @@
   </section>
 </main>
 
+<script type="module" src="js/auth.js"></script>
 <script src="js/categories.js"></script>
 <script>
 const SUPABASE_URL = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
