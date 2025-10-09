@@ -297,6 +297,29 @@ async function fetchProduct(id){
   renderFeatures(features);
   renderDesc();
   descToggle.onclick = () => { expanded = !expanded; renderDesc(); };
+  const jsonLd = {
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": p.title,
+  "image": p.image_url,
+  "description": p.description || "",
+  "sku": p.id,
+  "brand": { "@type": "Brand", "name": p.brand || "Sharkim Traders" },
+  "offers": {
+    "@type": "Offer",
+    "url": window.location.href,
+    "priceCurrency": "KES",
+    "price": p.price,
+    "availability": "https://schema.org/InStock",
+    "seller": { "@type": "Organization", "name": "Sharkim Traders" }
+  }
+};
+
+const script = document.createElement('script');
+script.type = 'application/ld+json';
+script.textContent = JSON.stringify(jsonLd);
+document.head.appendChild(script);
+
 
   btnWhats.href = `https://wa.me/254704843554?text=${encodeURIComponent('I want ' + p.title)}`;
   btnEmail.href = `mailto:sharkimtraders97@gmail.com?subject=${encodeURIComponent('Product Inquiry: ' + p.title)}&body=${encodeURIComponent('I am interested in ' + p.title)}`;
