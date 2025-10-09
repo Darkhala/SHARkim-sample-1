@@ -21,6 +21,29 @@
   <style>
     body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
   </style>
+  <!-- Google Merchant Structured Data -->
+<script type="application/ld+json" id="product-jsonld">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "Loading...",
+  "image": [],
+  "description": "",
+  "sku": "",
+  "brand": {
+    "@type": "Brand",
+    "name": "Sharkim Traders"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "",
+    "priceCurrency": "KES",
+    "price": "",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>
+
 </head>
 <body class="bg-gray-50">
 
@@ -297,6 +320,34 @@ async function fetchProduct(id){
     bcSubLink.textContent = p.subcategory;
   }
   fetchRelated(p);
+  // --- JSON-LD update for Google Merchant Center ---
+function updateJSONLD(prod) {
+  const jsonData = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": prod.title,
+    "image": [prod.image_url],
+    "description": prod.description || "Available at Sharkim Traders.",
+    "sku": String(prod.id),
+    "brand": {
+      "@type": "Brand",
+      "name": prod.brand || "Sharkim Traders"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://sharkim.co.ke/product.html?id=${prod.id}`,
+      "priceCurrency": "KES",
+      "price": String(prod.price),
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
+  const el = document.getElementById("product-jsonld");
+  if (el) el.textContent = JSON.stringify(jsonData, null, 2);
+}
+
+updateJSONLD(p);
+
 }
 
 async function fetchRelated(p){
