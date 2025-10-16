@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap for search engines and Google Merchant Center discovery
+Sitemap: https://sharkimtraders.co.ke/sitemap.xml
