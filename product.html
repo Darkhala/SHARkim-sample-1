@@ -23,26 +23,24 @@
   </style>
   <!-- Google Merchant Structured Data -->
 <script type="application/ld+json" id="product-jsonld">
-{
-  "@context": "https://schema.org/",
-  "@type": "Product",
-  "name": "Loading...",
-  "image": [],
-  "description": "",
-  "sku": "",
-  "brand": {
-    "@type": "Brand",
-    "name": "Sharkim Traders"
-  },
-  "offers": {
-    "@type": "Offer",
-    "url": "",
-    "priceCurrency": "KES",
-    "price": "",
-    "availability": "https://schema.org/InStock"
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": "Ramtons RM-399 Corded Electric Kettle – 1.7L Capacity, Fast Boil & Auto Shut-Off",
+    "image": ["https://..."],
+    "description": "Fast-boiling 1.7L kettle with auto shut-off",
+    "sku": "RM-399",
+    "brand": { "@type": "Brand", "name": "Ramtons" },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "KES",
+      "price": "2795.00",
+      "availability": "https://schema.org/InStock",
+      "itemCondition": "https://schema.org/NewCondition",
+      "seller": { "@type": "Organization", "name": "Sharkim Traders" }
+    }
   }
-}
-</script>
+  </script>
 
 </head>
 <body class="bg-gray-50">
@@ -286,19 +284,6 @@ async function fetchProduct(id){
   const disc = (p.original_price && p.original_price>0) ? Math.round(((p.original_price - p.price)/p.original_price)*100) : 0;
   if (disc){ pDisc.textContent = `${disc}% OFF`; pDisc.classList.remove('hidden'); }
 
-  // Update canonical and meta tags for SEO & Google Merchant
-  const fullUrl = `https://sharkimtraders.co.ke/product.html?id=${p.id}`;
-  const can = document.querySelector('link[rel="canonical"]'); if (can) can.setAttribute('href', fullUrl);
-  document.title = `${p.title} - Sharkim Traders`;
-  const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', (p.description || p.title).toString().slice(0, 300));
-  const ogt = document.querySelector('meta[property="og:title"]'); if (ogt) ogt.setAttribute('content', `${p.title} - Sharkim Traders`);
-  const ogd = document.querySelector('meta[property="og:description"]'); if (ogd) ogd.setAttribute('content', (p.description || p.title));
-  const ogi = document.querySelector('meta[property="og:image"]'); if (ogi) ogi.setAttribute('content', p.image_url);
-  const ogu = document.querySelector('meta[property="og:url"]'); if (ogu) ogu.setAttribute('content', fullUrl);
-  const twt = document.querySelector('meta[name="twitter:title"]'); if (twt) twt.setAttribute('content', `${p.title} - Sharkim Traders`);
-  const twd = document.querySelector('meta[name="twitter:description"]'); if (twd) twd.setAttribute('content', (p.description || p.title));
-  const twi = document.querySelector('meta[name="twitter:image"]'); if (twi) twi.setAttribute('content', p.image_url);
-
   const { desc: baseDesc, features } = normalizeFeatures(p.features, p.description || '');
   const fullDesc = baseDesc || 'No description available';
   const previewText = fullDesc.length > 220 ? (fullDesc.slice(0, 220) + '...') : fullDesc;
@@ -310,7 +295,29 @@ async function fetchProduct(id){
   renderFeatures(features);
   renderDesc();
   descToggle.onclick = () => { expanded = !expanded; renderDesc(); };
-  
+  const jsonLd = {
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": p.title,
+  "image": p.image_url,
+  "description": p.description || "",
+  "sku": p.id,
+  "brand": { "@type": "Brand", "name": p.brand || "Sharkim Traders" },
+  "offers": {
+    "@type": "Offer",
+    "url": window.location.href,
+    "priceCurrency": "KES",
+    "price": p.price,
+    "availability": "https://schema.org/InStock",
+    "seller": { "@type": "Organization", "name": "Sharkim Traders" }
+  }
+};
+
+const script = document.createElement('script');
+script.type = 'application/ld+json';
+script.textContent = JSON.stringify(jsonLd);
+document.head.appendChild(script);
+
 
   btnWhats.href = `https://wa.me/254704843554?text=${encodeURIComponent('I want ' + p.title)}`;
   btnEmail.href = `mailto:sharkimtraders97@gmail.com?subject=${encodeURIComponent('Product Inquiry: ' + p.title)}&body=${encodeURIComponent('I am interested in ' + p.title)}`;
@@ -349,12 +356,10 @@ function updateJSONLD(prod) {
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://sharkimtraders.co.ke/product.html?id=${prod.id}`,
+      "url": `https://sharkim.co.ke/product.html?id=${prod.id}`,
       "priceCurrency": "KES",
       "price": String(prod.price),
-      "availability": "https://schema.org/InStock",
-      "itemCondition": "https://schema.org/NewCondition",
-      "seller": { "@type": "Organization", "name": "Sharkim Traders" }
+      "availability": "https://schema.org/InStock"
     }
   };
 
