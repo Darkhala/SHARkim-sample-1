@@ -114,12 +114,12 @@
 
       <!-- Image Replace -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Product Image</label>
+        <label class="block text-sm font-medium text-gray-700">Product Images (you can select multiple)</label>
         <div class="flex items-center gap-3 mb-2">
           <img id="editImagePreview" src="" alt="Preview" class="h-20 w-20 object-cover rounded border" />
-          <span class="text-xs text-gray-500">Leave empty to keep current image</span>
+          <span class="text-xs text-gray-500">Leave empty to keep current image. If multiple are selected, the first becomes the main image.</span>
         </div>
-        <input id="editImage" type="file" accept="image/*" class="w-full px-3 py-2 border rounded" />
+        <input id="editImage" type="file" accept="image/*" multiple class="w-full px-3 py-2 border rounded" />
       </div>
 
       <!-- Buttons -->
@@ -182,6 +182,14 @@
     const editDescription = document.getElementById('editDescription');
     const editImage = document.getElementById('editImage');
     const editImagePreview = document.getElementById('editImagePreview');
+    editImage.addEventListener('change', () => {
+      const file = editImage.files && editImage.files[0];
+      if (file) {
+        try { editImagePreview.src = URL.createObjectURL(file); } catch {}
+      } else {
+        editImagePreview.src = editingCurrentImageUrl || '';
+      }
+    });
     const editStatus = document.getElementById('editStatus');
     const saveBtn = document.getElementById('saveBtn');
 
@@ -310,20 +318,27 @@
       editStatus.className = 'mt-2 text-sm text-gray-600';
 
       let imageUrl = editingCurrentImageUrl;
-      const imageFile = editImage.files && editImage.files[0] ? editImage.files[0] : null;
-      if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
-        const { error: uploadError } = await client.storage.from('product-images').upload(filePath, imageFile);
-        if (uploadError) {
-          editStatus.textContent = '❌ Image upload failed: ' + uploadError.message;
-          editStatus.className = 'mt-2 text-sm text-red-600';
-          hideLoading();
-          saveBtn.disabled = false;
-          return;
+      const files = Array.from(editImage.files || []);
+      if (files.length > 0) {
+        function slugify(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+        const folder = `products/${slugify(editTitle.value)||'product'}-${Date.now()}`;
+        const uploadedUrls = [];
+        for (let i=0; i<files.length; i++){
+          const f = files[i];
+          const ext = (f.name.split('.').pop()||'jpg').toLowerCase();
+          const name = `${i+1}-${Date.now()}.${ext}`;
+          const path = `${folder}/${name}`;
+          const { error: upErr } = await client.storage.from('product-images').upload(path, f);
+          if (upErr) {
+            editStatus.textContent = '❌ Image upload failed: ' + upErr.message;
+            editStatus.className = 'mt-2 text-sm text-red-600';
+            hideLoading();
+            saveBtn.disabled = false;
+            return;
+          }
+          uploadedUrls.push(`${supabaseUrl}/storage/v1/object/public/product-images/${path}`);
         }
-        imageUrl = `${supabaseUrl}/storage/v1/object/public/product-images/${filePath}`;
+        imageUrl = uploadedUrls[0] || editingCurrentImageUrl;
       }
 
       const updates = {
