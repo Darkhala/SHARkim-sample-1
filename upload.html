@@ -55,6 +55,8 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Product Images (you can select multiple)</label>
         <input type="file" id="images" accept="image/*" multiple class="w-full px-4 py-2 border rounded" required>
+        <div id="imagePreview" class="mt-3 flex flex-wrap gap-3"></div>
+        <p class="text-xs text-gray-500 mt-1">Click "Set Primary" to choose the main image. You can also remove a selected image before upload.</p>
       </div>
 
       <!-- Submit Button -->
@@ -77,6 +79,54 @@
       const description = document.getElementById('description');
       const features = document.getElementById('features');
       const brand = document.getElementById('brand');
+      const imagesInput = document.getElementById('images');
+      const imagePreview = document.getElementById('imagePreview');
+      let selectedFiles = [];
+
+      imagesInput.addEventListener('change', () => {
+        selectedFiles = Array.from(imagesInput.files||[]);
+        renderPreview();
+      });
+
+      function renderPreview(){
+        imagePreview.innerHTML = '';
+        selectedFiles.forEach((file, idx) => {
+          const url = URL.createObjectURL(file);
+          const card = document.createElement('div');
+          card.className = 'border rounded p-2 w-28 text-center';
+          card.innerHTML = `
+            <img src="${url}" class="w-24 h-24 object-cover rounded mb-1" alt="preview">
+            <div class="flex flex-col gap-1">
+              <button data-act="primary" data-idx="${idx}" class="text-xs bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded">Set Primary</button>
+              <button data-act="remove" data-idx="${idx}" class="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded">Remove</button>
+            </div>
+          `;
+          imagePreview.appendChild(card);
+        });
+        if (selectedFiles.length){
+          // ensure first is primary visually
+          const first = imagePreview.querySelector('div');
+          if (first) first.classList.add('ring-2','ring-yellow-400');
+        }
+      }
+
+      imagePreview.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        const idx = Number(btn.getAttribute('data-idx'));
+        const act = btn.getAttribute('data-act');
+        if (act === 'remove'){
+          selectedFiles.splice(idx,1);
+        } else if (act === 'primary'){
+          const [f] = selectedFiles.splice(idx,1);
+          selectedFiles.unshift(f);
+        }
+        // rebuild FileList for input (optional)
+        const dt = new DataTransfer();
+        selectedFiles.forEach(f => dt.items.add(f));
+        imagesInput.files = dt.files;
+        renderPreview();
+      });
 
       // Auth guard
       client.auth.getUser().then(({ data: { user } }) => { if (!user) window.location.href = "login.html"; });
@@ -125,8 +175,9 @@
 
         try {
           const uploadedUrls = [];
-          for (let i=0; i<files.length; i++){
-            const f = files[i];
+          const filesOrdered = selectedFiles.length ? selectedFiles : files;
+          for (let i=0; i<filesOrdered.length; i++){
+            const f = filesOrdered[i];
             const ext = (f.name.split('.').pop()||'jpg').toLowerCase();
             const name = `${i+1}-${Date.now()}.${ext}`;
             const path = `${folder}/${name}`;
@@ -141,6 +192,7 @@
             price,
             original_price: originalPrice,
             image_url: mainImageUrl,
+            images: uploadedUrls, // store all image URLs if column exists
             // legacy field for backward compatibility
             category: mainCat,
             main_category: mainCat,
@@ -158,5 +210,6 @@
       });
     };
   </script>
+<script src="js/theme.js"></script>
 </body>
 </html>
