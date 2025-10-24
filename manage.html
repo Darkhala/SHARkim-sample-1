@@ -112,6 +112,15 @@
         <textarea id="editDescription" class="w-full px-3 py-2 border rounded h-28" placeholder="Product Description"></textarea>
       </div>
 
+      <!-- Variants editor -->
+      <div class="border rounded p-3">
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-sm font-medium text-gray-700">Size/Price Variants</label>
+          <button type="button" id="editAddVariant" class="text-xs bg-gray-800 text-white px-2 py-1 rounded">Add Variant</button>
+        </div>
+        <div id="editVariantsWrap" class="space-y-2"></div>
+      </div>
+
       <!-- Image Replace -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Product Images (you can select multiple)</label>
@@ -184,6 +193,8 @@
     const editImage = document.getElementById('editImage');
     const editImagePreview = document.getElementById('editImagePreview');
     const editPreview = document.getElementById('editPreview');
+    const editVariantsWrap = document.getElementById('editVariantsWrap');
+    const editAddVariant = document.getElementById('editAddVariant');
 
     let editSelectedFiles = [];
 
@@ -241,6 +252,7 @@
     let latestProducts = [];
     let editingProductId = null;
     let editingCurrentImageUrl = null;
+    let editingVariants = [];
 
     function showLoading(text = 'Loading...') {
       if (loadingText) loadingText.textContent = text;
@@ -320,6 +332,36 @@
       } catch { return []; }
     }
 
+    function renderEditVariants(){
+      editVariantsWrap.innerHTML = '';
+      editingVariants.forEach((v, idx) => {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-12 gap-2';
+        row.innerHTML = `
+          <input class="col-span-6 px-2 py-2 border rounded" placeholder="Size" value="${v.size||''}" data-field="size" data-idx="${idx}">
+          <input type="number" class="col-span-5 px-2 py-2 border rounded" placeholder="Price (Ksh)" value="${v.price||''}" data-field="price" data-idx="${idx}">
+          <button type="button" class="col-span-1 bg-red-600 text-white rounded" data-act="rm" data-idx="${idx}">×</button>
+        `;
+        editVariantsWrap.appendChild(row);
+      });
+    }
+
+    editAddVariant.addEventListener('click', () => { editingVariants.push({ size: '', price: '' }); renderEditVariants(); });
+    editVariantsWrap.addEventListener('input', (e) => {
+      const idx = e.target.getAttribute('data-idx');
+      const field = e.target.getAttribute('data-field');
+      if (idx == null || !field) return;
+      if (field === 'price') editingVariants[idx][field] = e.target.value ? Number(e.target.value) : '';
+      else editingVariants[idx][field] = e.target.value;
+    });
+    editVariantsWrap.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-act="rm"]');
+      if (!btn) return;
+      const idx = Number(btn.getAttribute('data-idx'));
+      editingVariants.splice(idx,1);
+      renderEditVariants();
+    });
+
     function openEditModal() {
       editStatus.textContent = '';
       editStatus.className = 'mt-2 text-sm';
@@ -353,6 +395,13 @@
       editDescription.value = product.description || product.subcategory || '';
       editImage.value = '';
       editImagePreview.src = editingCurrentImageUrl || '';
+      try {
+        const v = product.variants;
+        if (Array.isArray(v)) editingVariants = v.map(x => ({ size: String(x.size||'').trim(), price: Number(x.price)||'' }));
+        else if (typeof v === 'string' && v.trim()) editingVariants = JSON.parse(v);
+        else editingVariants = [];
+      } catch { editingVariants = []; }
+      renderEditVariants();
       openEditModal();
     }
 
@@ -397,6 +446,10 @@
         updates.images = (productImagesExisting(editingProductId) || []).concat(uploadedUrls);
       }
 
+      const cleanVariants = editingVariants
+        .map(v => ({ size: String(v.size||'').trim(), price: Number(v.price) }))
+        .filter(v => v.size && !Number.isNaN(v.price) && v.price > 0);
+
       const updates = {
         title: editTitle.value.trim(),
         price: editPrice.value ? Number(editPrice.value) : null,
@@ -407,6 +460,7 @@
         brand: editBrand.value.trim() || null,
         description: editDescription.value.trim() || null,
         image_url: imageUrl || null,
+        variants: cleanVariants.length ? cleanVariants : null,
       };
 
       const idFilter = (/^\d+$/.test(String(editingProductId))) ? Number(editingProductId) : String(editingProductId);

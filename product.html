@@ -19,7 +19,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <style>
+    html, body { max-width: 100%; overflow-x: hidden; }
     body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
+    img, svg { max-width: 100%; height: auto; }
   </style>
   <!-- Google Merchant Structured Data -->
 <script type="application/ld+json" id="product-jsonld">
@@ -329,13 +331,16 @@ document.head.appendChild(script);
 
   btnWhats.href = `https://wa.me/254704843554?text=${encodeURIComponent('I want ' + p.title)}`;
   btnEmail.href = `mailto:sharkimtraders97@gmail.com?subject=${encodeURIComponent('Product Inquiry: ' + p.title)}&body=${encodeURIComponent('I am interested in ' + p.title)}`;
-  // Variant support
+  // Variant support with per-size pricing
   setupVariants(p);
 
   btnCart.onclick = () => {
-    const selectedVariant = variantOptions?.querySelector('input[name="variant-size"]:checked')?.value || null;
-    const titleWithVariant = selectedVariant ? `${p.title} (${selectedVariant})` : p.title;
-    cart.push({ id: p.id, title: titleWithVariant, price: p.price, image_url: p.image_url, variant: selectedVariant });
+    const selectedRadio = variantOptions?.querySelector('input[name="variant-size"]:checked');
+    const selectedSize = selectedRadio?.value || null;
+    const variantPrice = selectedRadio?.getAttribute('data-price');
+    const priceForCart = variantPrice ? Number(variantPrice) : p.price;
+    const titleWithVariant = selectedSize ? `${p.title} (${selectedSize})` : p.title;
+    cart.push({ id: p.id, title: titleWithVariant, price: priceForCart, image_url: p.image_url, variant: selectedSize });
     saveCart(); updateCartCount(); alert('Added to cart ✅');
   };
 
@@ -476,7 +481,25 @@ async function loadThumbnails(imageUrl){
 }
 
 function parseVariants(prod){
-  // Use subcategory hints or embedded description tags for sizes
+  // Preferred: explicit variants column [{size:string, price:number}]
+  if (Array.isArray(prod.variants)) {
+    const arr = prod.variants
+      .map(v => ({ size: String(v.size||'').trim(), price: Number(v.price) }))
+      .filter(v => v.size && !Number.isNaN(v.price) && v.price > 0);
+    if (arr.length) return arr;
+  }
+  if (typeof prod.variants === 'string' && prod.variants.trim()) {
+    try {
+      const parsed = JSON.parse(prod.variants);
+      if (Array.isArray(parsed)) {
+        const arr = parsed
+          .map(v => ({ size: String(v.size||'').trim(), price: Number(v.price) }))
+          .filter(v => v.size && !Number.isNaN(v.price) && v.price > 0);
+        if (arr.length) return arr;
+      }
+    } catch {}
+  }
+  // Fallbacks: category heuristics or [SIZES] tag without pricing => use base price
   const sizesByCategory = {
     'Mattresses': ['3x6', '3.5x6', '4x6', '5x6', '6x6'],
     'Shoes': ['38','39','40','41','42','43','44','45'],
@@ -488,24 +511,30 @@ function parseVariants(prod){
   let sizes = [];
   if (/(mattress|mattresses)/.test(main) || /(mattress|mattresses)/.test(sub)) sizes = sizesByCategory['Mattresses'];
   if (/(shoe|shoes|footwear)/.test(main) || /(shoe|shoes|footwear)/.test(sub)) sizes = sizesByCategory['Shoes'];
-
-  // Allow manual override via [SIZES]...
   const desc = String(prod.description||'');
   const m = desc.match(/\[SIZES\]([\s\S]*?)\[\/SIZES\]/i);
   if (m){ sizes = m[1].split(/\r?\n|,|;|\s+/).map(s => s.trim()).filter(Boolean); }
-  return sizes;
+  return (sizes||[]).map(sz => ({ size: sz, price: Number(prod.price) }));
 }
 function setupVariants(prod){
-  const sizes = parseVariants(prod);
-  if (!sizes || sizes.length === 0){ if (variantBox) variantBox.classList.add('hidden'); return; }
+  const variants = parseVariants(prod);
+  if (!variants || variants.length === 0){ if (variantBox) variantBox.classList.add('hidden'); return; }
   if (variantBox) variantBox.classList.remove('hidden');
   if (variantOptions){
-    variantOptions.innerHTML = sizes.map((s, i) => `
+    variantOptions.innerHTML = variants.map((v, i) => `
       <label class="inline-flex items-center gap-2 border rounded px-3 py-1 cursor-pointer">
-        <input type="radio" name="variant-size" value="${s}" ${i===0?'checked':''} />
-        <span>${s}</span>
+        <input type="radio" name="variant-size" value="${v.size}" data-price="${v.price}" ${i===0?'checked':''} />
+        <span>${v.size} <span class="text-xs text-gray-500">(Ksh ${v.price})</span></span>
       </label>
     `).join('');
+    // Update price text when selecting a variant
+    const handler = () => {
+      const selected = variantOptions.querySelector('input[name="variant-size"]:checked');
+      const pv = selected?.getAttribute('data-price');
+      if (pv) pPrice.textContent = `Ksh ${Number(pv)}`;
+    };
+    variantOptions.addEventListener('change', handler);
+    handler();
   }
 }
 
