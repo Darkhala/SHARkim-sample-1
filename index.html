@@ -141,7 +141,7 @@
   <!-- Right: Banner -->
   <div class="md:col-span-9 relative rounded overflow-hidden bg-white">
     <!-- Semi-transparent dark overlay above the image to enhance text legibility -->
-    <img src="/images/Banner.png" class="w-full h-64 md:h-72 object-cover block" alt="banner">
+    <img src="/images/Banner.png" class="w-full h-64 md:h-72 object-cover block" alt="banner" data-no-zoom>
     <div class="absolute inset-0 bg-black/40"></div>
     <div class="absolute inset-0 flex flex-col items-start justify-center p-4 md:p-6" style="color:#ffffff !important;">
       <h2 class="text-2xl md:text-3xl font-bold drop-shadow" style="color:#ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.35);">Home Appliances Electronics</h2>
@@ -387,6 +387,8 @@ function buildHomeSections(products){
     const container = section.querySelector('[data-cat]');
     sample.forEach(p => container.appendChild(renderCard(p)));
   });
+  // Re-init hover zoom after dynamic content render
+  if (window.initHoverZoom) window.initHoverZoom();
 }
 
 function renderCard(product){

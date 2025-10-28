@@ -166,6 +166,57 @@
 
 <script type="module" src="js/auth.js"></script>
 <script>
+// Focused magnifier for main product image (pImg) only
+function initMainImageZoom(){
+  const img = document.getElementById('pImg');
+  if (!img) return;
+  let container = img.closest('.zoom-container');
+  if (!container){
+    container = document.createElement('span');
+    container.className = 'zoom-container';
+    container.style.position = 'relative';
+    container.style.display = 'inline-block';
+    container.style.width = '100%';
+    img.parentNode.insertBefore(container, img);
+    container.appendChild(img);
+  }
+  let lens = container.querySelector('.zoom-lens');
+  if (!lens){
+    lens = document.createElement('span');
+    lens.className = 'zoom-lens';
+    container.appendChild(lens);
+  }
+  Object.assign(lens.style, {
+    position: 'absolute', pointerEvents: 'none', width: '140px', height: '140px', borderRadius: '9999px',
+    border: '2px solid rgba(255,255,255,0.95)', boxShadow: '0 6px 18px rgba(0,0,0,0.25)', backgroundRepeat: 'no-repeat',
+    backgroundImage: `url(${img.src})`, backgroundSize: '200% 200%', opacity: '0', transition: 'opacity .15s ease'
+  });
+  function updateLensBg(){ lens.style.backgroundImage = `url(${img.src})`; }
+  img.removeEventListener('load', updateLensBg); img.addEventListener('load', updateLensBg);
+  function move(e){
+    const rect = container.getBoundingClientRect();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = cx - rect.left; const y = cy - rect.top;
+    const lx = Math.max(0, Math.min(rect.width, x)) - lens.offsetWidth/2;
+    const ly = Math.max(0, Math.min(rect.height, y)) - lens.offsetHeight/2;
+    lens.style.left = lx + 'px'; lens.style.top = ly + 'px';
+    const px = Math.max(0, Math.min(1, x / rect.width)) * 100;
+    const py = Math.max(0, Math.min(1, y / rect.height)) * 100;
+    lens.style.backgroundPosition = px + '% ' + py + '%';
+  }
+  function enter(){ lens.style.opacity = '1'; }
+  function leave(){ lens.style.opacity = '0'; }
+  container.onmousemove = null; container.onmouseenter = null; container.onmouseleave = null;
+  container.ontouchmove = null; container.ontouchstart = null; container.ontouchend = null;
+  container.addEventListener('mousemove', move);
+  container.addEventListener('mouseenter', enter);
+  container.addEventListener('mouseleave', leave);
+  container.addEventListener('touchmove', move, { passive: true });
+  container.addEventListener('touchstart', enter, { passive: true });
+  container.addEventListener('touchend', leave);
+}
+
 const SUPABASE_URL = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc';
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -286,6 +337,7 @@ async function fetchProduct(id){
   };
 
   pImg.src = p.image_url;
+  initMainImageZoom();
   loadThumbnails(p.image_url);
   pTitle.textContent = p.title;
   pCat.textContent = `${p.main_category}${p.subcategory ? ' > ' + p.subcategory : ''}${p.brand ? ' • ' + p.brand : ''}`;
@@ -412,6 +464,8 @@ async function fetchRelated(p){
     `;
     relGrid.appendChild(el);
   });
+  // re-init zoom in case user hovers related image after load (optional for consistency)
+  if (window.initHoverZoom) window.initHoverZoom();
 }
 
 function parseFeatures(text){
@@ -474,7 +528,7 @@ async function loadThumbnails(imageUrl){
       const a = document.createElement('button');
       a.className = 'border rounded p-1 hover:ring-2 hover:ring-yellow-500';
       a.innerHTML = `<img src="${url}" class="w-16 h-16 object-contain" alt="thumb">`;
-      a.addEventListener('click', () => { pImg.src = url; });
+      a.addEventListener('click', () => { pImg.src = url; initMainImageZoom(); });
       pThumbs.appendChild(a);
     });
   } catch(e){ /* ignore */ }

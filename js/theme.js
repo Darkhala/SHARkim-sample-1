@@ -126,21 +126,28 @@
   }
 
   function enableHoverZoom(){
-    // Only apply zoom to product images, not logos/icons.
-    // We consider product images to be inside known product selectors
-    // like .product-gallery, .product-images, cards linking to product.html, or images with data-product-img.
-    const candidates = new Set();
-    document.querySelectorAll('.product-gallery img, .product-images img, [href*="product.html"] img, img[data-product-img]')
-      .forEach(img => candidates.add(img));
+    // Apply zoom to all meaningful images, excluding logos/icons and hero/banner.
+    const imgs = Array.from(document.querySelectorAll('img'));
+    imgs.forEach(img => {
+      // Exclusions: logos/icons/hero/banner or explicitly opted-out
+      const src = (img.getAttribute('src')||'').toLowerCase();
+      const alt = (img.getAttribute('alt')||'').toLowerCase();
+      const cls = img.className || '';
+      const isExplicitNo = img.hasAttribute('data-no-zoom') || /\bno-zoom\b/.test(cls);
+      const isLogoLike = /logo|icon|mpesa|payment|favicon/.test(src) || /logo|icon/.test(alt) || /\bbrand\b|\blogo\b|\bicon\b/.test(cls);
+      const inHeaderFooter = false; // do not blanket-exclude header/footer
+      const heroBanner = document.querySelector('.md\\:col-span-9 img');
+      const isHeroBanner = heroBanner && img === heroBanner;
 
-    candidates.forEach(img => {
-      // Skip very small icons
-      const w = img.getAttribute('width');
-      const h = img.getAttribute('height');
+      // Skip tiny icons
       const rect = img.getBoundingClientRect();
-      const tinyBySize = rect.width <= 32 || rect.height <= 32;
-      const isTiny = (w && Number(w) <= 24) || (h && Number(h) <= 24) || tinyBySize;
-      if (isTiny) return;
+      const wAttr = Number(img.getAttribute('width')||0);
+      const hAttr = Number(img.getAttribute('height')||0);
+      const isTiny = (rect.width && rect.width <= 32) || (rect.height && rect.height <= 32) || wAttr <= 32 || hAttr <= 32;
+
+      if (isExplicitNo || isLogoLike || inHeaderFooter || isHeroBanner || isTiny) return;
+
+      // Add hover-zoom
       img.classList.add('hover-zoom');
 
       // Wrap in a zoom container once
@@ -194,6 +201,11 @@
   // Initialize on DOM ready
   function ready(fn){ if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
 
+  // Expose re-init globally so pages can call after dynamic renders
+  window.initHoverZoom = function(){
+    try { enableHoverZoom(); } catch {}
+  };
+
   ready(() => {
     // Apply theme
     initTheme();
@@ -203,7 +215,7 @@
     if (!existing) document.body.appendChild(buildToggle());
     updateToggleUI(currentTheme());
 
-    // Enable image hover zoom on product images only
+    // Initial pass
     enableHoverZoom();
 
     // React to OS theme changes if user hasn't explicitly chosen
