@@ -18,7 +18,12 @@
   <meta name="twitter:image" content="/images/sharkim_gold_logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
+    body { font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
+    .container-pro { max-width: 1100px; }
+    .card { background: white; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+    .section-title { letter-spacing: 0.2px; }
+    .lead { color: #4b5563; }
+    .pill { display:inline-block; padding: 6px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; background: #EEF2FF; color: #3730A3; }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -72,46 +77,50 @@
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto p-4">
+<main class="mx-auto p-6 container-pro">
   <!-- Hero -->
-  <section class="bg-white rounded shadow p-6">
-    <div class="flex items-start gap-4">
-      <img src="images/sharkim_gold_logo.png" alt="Sharkim Traders" class="w-16 h-16 object-contain">
+  <section class="card p-8 md:p-10">
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+      <img src="images/sharkim_gold_logo.png" alt="Sharkim Traders" class="w-20 h-20 object-contain rounded"/>
       <div>
-        <h1 class="text-2xl font-bold">About Sharkim Traders</h1>
-        <p class="text-gray-700 mt-2">We supply quality home appliances and electronics at honest prices, backed by fast support and reliable delivery across Kenya.</p>
-        <div class="mt-3 flex gap-2">
-          <a href="shop.html" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Shop now</a>
-          <a href="contact.html" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-black">Contact us</a>
+        <h1 class="text-3xl md:text-4xl font-extrabold section-title">About Sharkim Traders</h1>
+        <p class="mt-2 lead">Kenya’s trusted one-stop shop for home essentials, fashion, shoes, tools, and appliances.</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span class="pill">Quality First</span>
+          <span class="pill">Nationwide Delivery</span>
+          <span class="pill">Great Deals</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Highlights -->
-  <section class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="bg-white rounded shadow p-5">
-      <h3 class="font-semibold mb-2">Reliable Delivery</h3>
-      <p class="text-gray-700 text-sm">Door-to-door delivery with careful handling. Transparent timelines and updates.</p>
-    </div>
-    <div class="bg-white rounded shadow p-5">
-      <h3 class="font-semibold mb-2">Great Value</h3>
-      <p class="text-gray-700 text-sm">Competitive pricing and regular deals on trusted brands and models.</p>
-    </div>
-    <div class="bg-white rounded shadow p-5">
-      <h3 class="font-semibold mb-2">Customer Support</h3>
-      <p class="text-gray-700 text-sm">Reach us via WhatsApp, phone, or email. We respond quickly.</p>
-    </div>
-  </section>
-
-  <!-- Our Promise -->
-  <section class="mt-6 bg-white rounded shadow p-6">
-    <h2 class="text-xl font-semibold mb-2">Our Promise</h2>
-    <ul class="list-disc list-inside text-gray-700 space-y-1">
-      <li>Authentic products with transparent specifications.</li>
-      <li>Clear pricing and reliable after-sales support.</li>
-      <li>Friendly service��your satisfaction is our priority.</li>
-    </ul>
+  <!-- Story -->
+  <section class="mt-8 grid md:grid-cols-3 gap-6">
+    <article class="card p-6 md:col-span-2 space-y-4">
+      <p>Welcome to Sharkim Traders — your trusted destination for quality, variety, and convenience.</p>
+      <p>We’re a proudly Kenyan retail brand bringing you a diverse selection of home essentials, fashion, shoes, tools, and appliances, all designed to make everyday living easier, smarter, and more stylish.</p>
+      <p>At Sharkim Traders, we believe shopping should be simple and satisfying. That’s why we’ve built a one-stop shop where you can find kitchen appliances, décor pieces, cleaning tools, footwear, and trendy fashion items — all in one place.</p>
+      <p>Every product is carefully chosen to ensure durability, value, and performance that meet your lifestyle needs.</p>
+      <p>We’re known not only for our great products but also for our exceptional service. From the moment you place your order to the time it reaches your doorstep, we promise a smooth, timely, and reliable experience — because at Sharkim Traders, “Usted ordena, entregamos.”</p>
+      <div class="pt-2">
+        <p class="font-semibold">Because at the heart of everything we do is our promise:</p>
+        <p class="text-xl font-extrabold">“Usted ordena, entregamos.”</p>
+      </div>
+      <div class="pt-4 flex flex-wrap gap-2">
+        <a href="shop.html" class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700">Shop now</a>
+        <a href="contact.html" class="px-5 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-black">Contact us</a>
+      </div>
+    </article>
+    <aside class="card p-6 space-y-4">
+      <h2 class="text-xl font-bold">Why Shop with Sharkim Traders</h2>
+      <ul class="space-y-2 text-sm">
+        <li class="flex items-start gap-2"><span>🔹</span><span>Wide Range of Products – From home appliances and décor to shoes, tools, and fashion.</span></li>
+        <li class="flex items-start gap-2"><span>🔹</span><span>Quality You Can Trust – Every item is tested for performance and reliability.</span></li>
+        <li class="flex items-start gap-2"><span>🔹</span><span>Affordable Prices – Great deals that suit every budget.</span></li>
+        <li class="flex items-start gap-2"><span>🔹</span><span>Timely Delivery Nationwide – We deliver fast, securely, and on schedule.</span></li>
+        <li class="flex items-start gap-2"><span>🔹</span><span>Dedicated Customer Support – Friendly service every step of the way.</span></li>
+      </ul>
+    </aside>
   </section>
 </main>
 

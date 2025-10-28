@@ -7,7 +7,8 @@
   <link rel="icon" type="image/png" href="/images/icon logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <script src="js/categories.js"></script>
+  <link rel="preload" href="js/categories.js" as="script">
+  <script src="js/categories.js" defer></script>
   <style>
     body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
     .hidden { display: none !important; }
@@ -288,9 +289,10 @@
     }
 
     async function fetchProducts(searchTerm = '', category = '', subcategory = '') {
+      // Fetch minimal columns first to reduce payload and render fast
       showLoading('Loading products...');
       statusText.textContent = 'Loading products...';
-      let query = client.from('Products').select('*').order('id', { ascending: false });
+      let query = client.from('Products').select('id,title,price,original_price,image_url,main_category,category,subcategory,brand').order('id', { ascending: false });
       if (searchTerm) query = query.ilike('title', `%${searchTerm}%`);
       if (category) query = query.eq('main_category', category);
       if (subcategory) query = query.eq('subcategory', subcategory);

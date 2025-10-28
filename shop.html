@@ -339,7 +339,7 @@ function renderCard(product){
     <div class=\"mt-1\">
       <p class=\"text-xs line-through text-gray-500\">${product.original_price ? 'Ksh '+product.original_price : ''}</p>
       <p class=\"text-red-600 font-bold\">Ksh ${product.price}</p>
-      ${discount?`<span class=\"bg-green-600 text-white text-xs px-2 py-0.5 rounded inline-block mt-1\">${discount}% OFF</span>`:''}
+      ${discount?`<span class=\"bg-red-600 text-white text-xs px-2 py-0.5 rounded inline-block mt-1\">${discount}% OFF</span>`:''}
     </div>
     <div class=\"mt-2 flex gap-2\">
       <button class=\"flex-1 bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700\" data-add> Add to Cart </button>

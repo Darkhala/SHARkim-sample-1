@@ -116,19 +116,24 @@
   }
 
   function initTheme(){
-    let preferred = 'light';
+    let preferred = 'light'; // Light mode is the primary default
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === 'dark' || saved === 'light') preferred = saved;
-      else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) preferred = 'dark';
+      // Do not auto-switch to dark unless the user previously chose it.
     } catch {}
     setTheme(preferred);
   }
 
   function enableHoverZoom(){
-    // Add hover-zoom class and enhance with follow-cursor zoom
-    const imgs = Array.from(document.querySelectorAll('img'));
-    imgs.forEach(img => {
+    // Only apply zoom to product images, not logos/icons.
+    // We consider product images to be inside known product selectors
+    // like .product-gallery, .product-images, cards linking to product.html, or images with data-product-img.
+    const candidates = new Set();
+    document.querySelectorAll('.product-gallery img, .product-images img, [href*="product.html"] img, img[data-product-img]')
+      .forEach(img => candidates.add(img));
+
+    candidates.forEach(img => {
       // Skip very small icons
       const w = img.getAttribute('width');
       const h = img.getAttribute('height');
@@ -198,7 +203,7 @@
     if (!existing) document.body.appendChild(buildToggle());
     updateToggleUI(currentTheme());
 
-    // Enable image hover zoom
+    // Enable image hover zoom on product images only
     enableHoverZoom();
 
     // React to OS theme changes if user hasn't explicitly chosen
