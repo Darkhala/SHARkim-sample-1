@@ -3,68 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/images/icon logo.png">
+  <link rel="icon" type="image/png" href="images/icon logo.png">
   <title>Shop - Sharkim Traders</title>
   <meta name="description" content="Browse and filter a wide selection of electronics and appliances at Sharkim Traders. Great prices and reliable delivery.">
-  <link rel="canonical" href="/shop.html">
+  <link rel="canonical" href="https://sharkimtraders.co.ke/shop.html">
+  
+  <!-- Open Graph -->
   <meta property="og:title" content="Shop - Sharkim Traders">
   <meta property="og:description" content="Browse electronics and appliances at great prices.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="/images/sharkim_gold_logo.png">
-  <meta property="og:url" content="/shop.html">
+  <meta property="og:image" content="images/sharkim_gold_logo.png">
+  <meta property="og:url" content="https://sharkimtraders.co.ke/shop.html">
+  
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Shop - Sharkim Traders">
   <meta name="twitter:description" content="Browse electronics and appliances at great prices.">
-  <meta name="twitter:image" content="/images/sharkim_gold_logo.png">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <style>
-    body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
-  </style>
-</head>
-<body class="bg-gray-50">
+  <meta name="twitter:image" content="images/sharkim_gold_logo.png">
 
-<!-- Minimal Header: Logo top-left, Cart top-right, Nav centered -->
-<header class="bg-black text-white py-4">
-  <div class="max-w-7xl mx-auto px-3">
-    <div class="flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2">
-        <img src="images/sharkim_gold_logo.png" class="h-12" alt="logo">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Supabase JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-100">
+
+<!-- TOP CONTACT BAR -->
+<div class="w-full bg-black text-gray-300 text-xs py-2">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="https://wa.me/254704843554" class="flex items-center gap-1 hover:text-yellow-400 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 32 32" fill="currentColor"><path d="M16 .5C7.6.5.5 7.6.5 16c0 2.8.7 5.5 2.2 7.9L0 32l8.3-2.7c2.3 1.3 5 2 7.7 2 8.4 0 15.5-7.1 15.5-15.5S24.4.5 16 .5zM16 29c-2.4 0-4.8-.6-6.9-1.8l-.5-.3-4.9 1.6 1.6-4.8-.3-.5C3.6 21 3 18.6 3 16 3 9.4 9.4 3 16 3s13 6.4 13 13-6.4 13-13 13zm7.3-9.8c-.4-.2-2.3-1.1-2.6-1.2s-.6-.2-.8.2c-.2.4-1 1.2-1.2 1.4s-.4.3-.8.1c-.4-.2-1.6-.6-3-2-1.1-1.1-1.9-2.3-2.1-2.7s0-.6.2-.8.4-.4.6-.6c.2-.2.3-.4.4-.6.1-.2 0-.5 0-.7s-.8-2-1.1-2.8c-.3-.8-.6-.7-.8-.7h-.7c-.2 0-.7.1-1.1.5s-1.4 1.4-1.4 3.4 1.4 3.9 1.6 4.1c.2.2 2.7 4.2 6.5 5.9.9.4 1.7.7 2.2.9.9.3 1.6.3 2.2.2.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/></svg>
+        +254 704 843 554
       </a>
-      <button id="cartBtn" class="flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7z"/></svg>
+      <a href="mailto:sharkimtraders97@gmail.com" class="hover:text-yellow-400 transition-colors">sharkimtraders97@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER - White background -->
+<header class="bg-white text-gray-900 shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <!-- Logo and Cart Row -->
+    <div class="flex items-center justify-between mb-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="images/sharkim_gold_logo.png" alt="Sharkim Traders Logo" class="h-12 w-auto">
+      </a>
+      <button id="cartBtn" class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7zm0 16c-1.1 0-2 .9-2 2s.9 2 2 2c1.2 0 2-.9 2-2s-.8-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2c1.2 0 2-.9 2-2s-.9-2-2-2z"/></svg>
         Cart
         <span id="cartCount" class="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">0</span>
       </button>
     </div>
-    <nav class="mt-3">
-      <ul class="flex justify-center gap-6 text-sm">
+
+    <!-- Navigation -->
+    <nav>
+      <ul class="flex flex-wrap justify-center gap-4 md:gap-6 text-sm">
         <li>
-          <a href="index.html" class="flex items-center gap-2 hover:text-yellow-400">
+          <a href="index.html" class="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3l9-8z"/></svg>
             Home
           </a>
         </li>
         <li>
-          <a href="shop.html" class="flex items-center gap-2 hover:text-yellow-400">
+          <a href="shop.html" class="flex items-center gap-1 text-amber-600 font-medium transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h-2l-1 2H1v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.8 0 1.2.2.4.6.6 1 .6h12v-2H7.4c-.1 0-.2 0-.2-.1l.9-1.5h7.9c.4 0 .7-.2.9-.5l3.6-6.5c.2-.4.1-.8 0-1.1-.2-.3-.5-.5-.9-.5H6.2L5.3 4H7z"/></svg>
             Shop
           </a>
         </li>
         <li>
-          <a href="about.html" class="flex items-center gap-2 hover:text-yellow-400">
+          <a href="about.html" class="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
             About
           </a>
         </li>
         <li>
-          <a href="faq.html" class="flex items-center gap-2 hover:text-yellow-400">
+          <a href="faq.html" class="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm1 15h-2v-2h2v2zm2.07-7.75c-.9.65-1.07 1.09-1.07 1.75h-2c0-1.6 1.04-2.45 1.86-3.03.74-.51 1.14-.85 1.14-1.47 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5H9c0-1.93 1.57-3.5 3.5-3.5S16 4.57 16 6.5c0 1.55-1.15 2.3-1.93 2.75z"/></svg>
             FAQ
           </a>
         </li>
         <li>
-          <a href="contact.html" class="flex items-center gap-2 hover:text-yellow-400">
+          <a href="contact.html" class="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21 8V7l-3 2-2-1-4 2-4-2-4 2v10h20V8zM5 17v-6l3-1.5 4 2 4-2 3 1.5V17H5zm7-11l4 2 5-3-9-4-9 4 5 3 4-2z"/></svg>
             Contact
           </a>
@@ -74,6 +100,7 @@
   </div>
 </header>
 
+<!-- Main Content -->
 <main class="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-4">
   <!-- Filters -->
   <aside class="md:col-span-3 bg-white rounded shadow p-4 space-y-4 h-fit">
@@ -119,13 +146,13 @@
     <div>
       <label class="text-sm block mb-1">Brands</label>
       <div id="brandBox" class="max-h-56 overflow-auto border rounded p-2 text-sm space-y-1">
-        <!-- dynamically populated with unique brands for current filter scope -->
+        <!-- dynamically populated -->
       </div>
     </div>
 
     <div class="flex gap-2">
-      <button id="applyBtn" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded">Apply</button>
-      <button id="clearBtn" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded">Clear</button>
+      <button id="applyBtn" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Apply</button>
+      <button id="clearBtn" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Clear</button>
     </div>
   </aside>
 
@@ -139,249 +166,54 @@
   </section>
 </main>
 
-<script type="module" src="js/auth.js"></script>
+<!-- Footer Section -->
+<footer class="bg-black text-gray-300 mt-16">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div>
+      <img src="images/sharkim_gold_logo.png" alt="Sharkim Traders Logo" class="h-12 mb-4">
+      <p class="mb-2">WhatsApp: <a href="https://wa.me/254704843554" class="text-amber-500 hover:text-amber-400">+254 704 843 554</a></p>
+      <p class="mb-2">Call: <a href="tel:+254704843554" class="text-white hover:text-amber-400">+254 704 843 554</a></p>
+      <p class="mb-2">Email: <a href="mailto:sharkimtraders97@gmail.com" class="text-amber-500 hover:text-amber-400">sharkimtraders97@gmail.com</a></p>
+      <p class="text-sm text-gray-500">Hours: 8:30AM - 6:30PM</p>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold mb-4 text-white">Quick Links</h3>
+      <ul class="space-y-2">
+        <li><a href="index.html" class="hover:text-amber-500 transition-colors">Home</a></li>
+        <li><a href="shop.html" class="hover:text-amber-500 transition-colors">Shop</a></li>
+        <li><a href="about.html" class="hover:text-amber-500 transition-colors">About Us</a></li>
+        <li><a href="faq.html" class="hover:text-amber-500 transition-colors">FAQ</a></li>
+        <li><a href="contact.html" class="hover:text-amber-500 transition-colors">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold mb-4 text-white">Policies</h3>
+      <ul class="space-y-2">
+        <li><a href="privacy.html" class="hover:text-amber-500 transition-colors">Privacy Policy</a></li>
+        <li><a href="terms.html" class="hover:text-amber-500 transition-colors">Terms of Service</a></li>
+        <li><a href="return-policy.html" class="hover:text-amber-500 transition-colors">Return Policy</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold mb-4 text-white">Payments</h3>
+      <div class="flex items-center gap-3">
+        <img src="images/mpesa1.png" alt="M-PESA" class="h-8">
+      </div>
+      <p class="text-sm text-gray-500 mt-2">Cash on Delivery Available</p>
+    </div>
+  </div>
+  <div class="border-t border-gray-800 text-center py-4">
+    <p class="text-sm text-gray-500">&copy; 2025 Sharkim Traders. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- JavaScript Files - No inline scripts -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
 <script src="js/categories.js"></script>
-<script>
-const SUPABASE_URL = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc';
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<script src="js/cart.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/shop.js"></script>
 
-const fSearch = document.getElementById('fSearch');
-const fMain = document.getElementById('fMain');
-const fSub = document.getElementById('fSub');
-const brandBox = document.getElementById('brandBox');
-const fSort = document.getElementById('fSort');
-const countEl = document.getElementById('count');
-const grid = document.getElementById('grid');
-const listTitle = document.getElementById('listTitle');
-const cartBtn = document.getElementById('cartBtn');
-const cartCountBadge = document.getElementById('cartCount');
-
-let all = [];
-let view = [];
-
-// Cart
-let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-function saveCart(){ localStorage.setItem('cart', JSON.stringify(cart)); }
-function updateCartCount(){ if (cartCountBadge) cartCountBadge.innerText = cart.length; }
-updateCartCount();
-
-(function ensureCartDrawer(){
-  if (document.getElementById('cartDrawer')) return;
-  const drawer = document.createElement('div');
-  drawer.id = 'cartDrawer';
-  drawer.className = 'fixed top-0 right-0 w-80 max-w-full h-full bg-white shadow-lg p-4 hidden z-50';
-  drawer.innerHTML = `
-    <h2 class=\"text-lg font-bold mb-4\">Your Cart</h2>
-    <div id=\"cartItems\" class=\"space-y-3\"></div>
-    <div class=\"mt-4 border-t pt-3\">
-      <p class=\"font-bold\">Total: Ksh <span id=\"cartTotal\">0</span></p>
-      <div class=\"flex gap-2 mt-3\">
-        <button id=\"cartWhatsApp\" class=\"bg-green-600 text-white px-3 py-2 rounded w-1/2\">WhatsApp</button>
-        <button id=\"cartEmail\" class=\"bg-blue-600 text-white px-3 py-2 rounded w-1/2\">Email</button>
-      </div>
-    </div>
-    <button id=\"cartClose\" class=\"absolute top-2 right-2 text-gray-500\">
-      <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">
-        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" />
-      </svg>
-    </button>
-  `;
-  document.body.appendChild(drawer);
-  document.getElementById('cartClose').onclick = closeCart;
-  document.getElementById('cartWhatsApp').onclick = checkoutWhatsApp;
-  document.getElementById('cartEmail').onclick = checkoutEmail;
-})();
-
-function openCart(){ renderCart(); document.getElementById('cartDrawer').classList.remove('hidden'); }
-function closeCart(){ document.getElementById('cartDrawer').classList.add('hidden'); }
-function renderCart(){
-  const wrap = document.getElementById('cartItems');
-  const totalEl = document.getElementById('cartTotal');
-  wrap.innerHTML = '';
-  let total = 0;
-  if (cart.length === 0) { wrap.innerHTML = "<p class='text-gray-500'>Your cart is empty</p>"; totalEl.innerText = 0; return; }
-  cart.forEach((item, idx) => {
-    total += Number(item.price) || 0;
-    const row = document.createElement('div');
-    row.className = 'flex gap-2 items-center border-b pb-2';
-    row.innerHTML = `
-      <img src=\"${item.image_url}\" alt=\"${item.title}\" class=\"w-12 h-12 object-contain\">
-      <div class=\"flex-1\">
-        <p class=\"font-bold text-sm\">${item.title}</p>
-        <p class=\"text-xs text-gray-600\">Ksh ${item.price}</p>
-      </div>
-      <button class=\"text-red-600\" aria-label=\"Remove\">
-        <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">
-          <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 7V5a2 2 0 114 0v2\" />
-        </svg>
-      </button>
-    `;
-    row.querySelector('button').onclick = () => { cart.splice(idx, 1); saveCart(); updateCartCount(); renderCart(); };
-    wrap.appendChild(row);
-  });
-  totalEl.innerText = total;
-}
-
-function checkoutWhatsApp(){
-  if (cart.length === 0) return alert('Your cart is empty!');
-  let msg = '🛒 *New Order from Sharkim Traders*\n\n';
-  let total = 0; cart.forEach((item, i) => { msg += `${i+1}. ${item.title} - Ksh ${item.price}\n`; total += Number(item.price)||0; });
-  msg += `\n----------------------\n💰 *Total:* Ksh ${total}\n\n`;
-  msg += '📍 Please confirm delivery details.';
-  window.open(`https://wa.me/+254704843554?text=${encodeURIComponent(msg)}`, '_blank');
-}
-function checkoutEmail(){
-  if (cart.length === 0) return alert('Your cart is empty!');
-  let subject = '🛒 New Cart Order - Sharkim Traders';
-  let body = 'Hello Sharkim Traders,\n\nI\'d like to order the following products:\n\n';
-  let total = 0; cart.forEach((item, i) => { body += `${i+1}. ${item.title} - Ksh ${item.price}\n`; total += Number(item.price)||0; });
-  body += `\n----------------------\nTotal: Ksh ${total}\n\n`;
-  body += 'Customer details:\nName: __________\nPhone: __________\nLocation: __________';
-  window.location.href = `mailto:sharkimtraders97@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
-if (cartBtn) cartBtn.onclick = openCart;
-
-function qs(){ return new URLSearchParams(window.location.search); }
-function setQS(params){ const url = new URL(window.location.href); url.search = params.toString(); window.history.replaceState({}, '', url.toString()); }
-
-function initFiltersFromQS(){
-  const p = qs();
-  fSearch.value = p.get('q') || '';
-  const main = p.get('main') || '';
-  populateMain(main);
-  const sub = p.get('sub') || '';
-  populateSub(main, sub);
-  const sort = p.get('sort') || '';
-  fSort.value = sort;
-  const price = p.get('price');
-  if (price){ const r = document.querySelector(`input[name=\"price\"][value=\"${price}\"]`); if (r) r.checked = true; }
-}
-
-function populateMain(selected=''){
-  fMain.innerHTML = '<option value="">All</option>' + MAIN_CATEGORIES.map(c => `<option ${selected===c?'selected':''} value="${c}">${c}</option>`).join('');
-}
-function populateSub(main, selected=''){
-  const subs = main ? getSubcategories(main) : [];
-  if (subs.length === 0){ fSub.innerHTML = '<option value="">All</option>'; fSub.disabled = true; return; }
-  fSub.innerHTML = '<option value="">All</option>' + subs.map(s => `<option ${selected===s?'selected':''} value="${s}">${s}</option>`).join('');
-  fSub.disabled = false;
-}
-
-function uniqueBrands(list){ return Array.from(new Set(list.map(p => (p.brand||'').trim()).filter(Boolean))).sort(); }
-function renderBrands(list){
-  const brands = uniqueBrands(list);
-  const p = qs();
-  const active = new Set((p.get('brands')||'').split(',').filter(Boolean));
-  brandBox.innerHTML = brands.map(b => `
-    <label class="flex items-center gap-2">
-      <input type="checkbox" value="${b}" ${active.has(b)?'checked':''}> ${b}
-    </label>
-  `).join('');
-}
-
-async function fetchAll(){
-  const { data, error } = await client.from('Products').select('*').order('id', { ascending: false });
-  if (error){ console.error(error); return; }
-  all = (data||[]).map(p => ({
-    ...p,
-    main_category: p.main_category || p.category || 'Uncategorized',
-    description: p.description || p.subcategory || ''
-  }));
-  filterAndRender();
-}
-
-function filterAndRender(){
-  const p = qs();
-  const q = (p.get('q')||'').toLowerCase();
-  const main = p.get('main') || '';
-  const sub = p.get('sub') || '';
-  const sort = p.get('sort') || '';
-  const price = p.get('price') || '';
-  const brandParam = (p.get('brands')||'').split(',').filter(Boolean);
-
-  view = all.filter(item => {
-    if (q && !(`${item.title} ${item.main_category} ${item.subcategory} ${item.brand||''}`.toLowerCase().includes(q))) return false;
-    if (main && (item.main_category !== main)) return false;
-    if (sub && (item.subcategory !== sub)) return false;
-    if (brandParam.length && !brandParam.includes((item.brand||'').trim())) return false;
-    if (price){
-      const [min,max] = price.split('-').map(Number);
-      const pp = Number(item.price)||0;
-      if (pp < min || pp > max) return false;
-    }
-    return true;
-  });
-
-  if (sort === 'price_asc') view.sort((a,b)=> (a.price||0) - (b.price||0));
-  else if (sort === 'price_desc') view.sort((a,b)=> (b.price||0) - (a.price||0));
-  else if (sort === 'newest') view.sort((a,b)=> (b.id||0) - (a.id||0));
-
-  grid.innerHTML = '';
-  if (view.length === 0){ grid.innerHTML = '<p class="text-gray-600">No items found.</p>'; }
-  view.forEach(p => grid.appendChild(renderCard(p)));
-  countEl.textContent = view.length;
-  listTitle.textContent = main ? main : 'Our Shop';
-  renderBrands(view.length ? view : all);
-}
-
-function renderCard(product){
-  const discount = (product.original_price && product.original_price>0)
-    ? Math.round(((product.original_price - product.price)/product.original_price)*100)
-    : 0;
-  const el = document.createElement('div');
-  el.className = 'bg-white border rounded shadow p-3 flex flex-col';
-  el.innerHTML = `
-    <a href=\"product.html?id=${encodeURIComponent(product.id)}\" class=\"block\">
-      <img src=\"${product.image_url}\" alt=\"${product.title}\" class=\"h-40 w-full object-contain rounded mb-2\">
-      <h3 class=\"text-sm font-semibold line-clamp-2\">${product.title}</h3>
-    </a>
-    <div class=\"mt-1\">
-      <p class=\"text-xs line-through text-gray-500\">${product.original_price ? 'Ksh '+product.original_price : ''}</p>
-      <p class=\"text-red-600 font-bold\">Ksh ${product.price}</p>
-      ${discount?`<span class=\"bg-red-600 text-white text-xs px-2 py-0.5 rounded inline-block mt-1\">${discount}% OFF</span>`:''}
-    </div>
-    <div class=\"mt-2 flex gap-2\">
-      <button class=\"flex-1 bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700\" data-add> Add to Cart </button>
-      <a class=\"flex-1 bg-green-600 text-white text-sm py-1.5 rounded text-center hover:bg-green-700\" target=\"_blank\" href=\"https://wa.me/254704843554?text=${encodeURIComponent('I want ' + product.title)}\">WhatsApp</a>
-    </div>`;
-  el.querySelector('[data-add]').onclick = () => { cart.push({ id: product.id, title: product.title, price: product.price, image_url: product.image_url }); saveCart(); updateCartCount(); };
-  return el;
-}
-
-// Events
-fMain.addEventListener('change', () => { populateSub(fMain.value, ''); const p = qs(); p.set('main', fMain.value); p.delete('sub'); setQS(p); filterAndRender(); });
-fSub.addEventListener('change', () => { const p = qs(); if (fSub.value) p.set('sub', fSub.value); else p.delete('sub'); setQS(p); filterAndRender(); });
-document.getElementById('applyBtn').addEventListener('click', () => {
-  const p = qs();
-  const q = (fSearch.value||'').trim();
-  if (q) p.set('q', q); else p.delete('q');
-  if (fSort.value) p.set('sort', fSort.value); else p.delete('sort');
-  const pr = document.querySelector('input[name=\"price\"]:checked');
-  if (pr) p.set('price', pr.value); else p.delete('price');
-  const selectedBrands = Array.from(brandBox.querySelectorAll('input[type=\"checkbox\"]:checked')).map(i=>i.value);
-  if (selectedBrands.length) p.set('brands', selectedBrands.join(',')); else p.delete('brands');
-  setQS(p);
-  filterAndRender();
-});
-
-document.getElementById('clearBtn').addEventListener('click', () => {
-  const p = new URLSearchParams();
-  setQS(p);
-  fSearch.value = '';
-  populateMain('');
-  populateSub('', '');
-  document.querySelectorAll('input[name=\"price\"]').forEach(i => i.checked = false);
-  fSort.value = '';
-  fetchAll();
-});
-
-fMain.addEventListener('input', () => populateSub(fMain.value, ''));
-
-// Init
-initFiltersFromQS();
-fetchAll();
-</script>
-<script src="js/theme.js"></script>
 </body>
 </html>

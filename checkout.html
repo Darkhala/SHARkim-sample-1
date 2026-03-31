@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="images/icon logo.png">
+  <title>Checkout - Sharkim Traders</title>
+  <meta name="description" content="Complete your order at Sharkim Traders. Enter delivery details and select payment method.">
+  <link rel="canonical" href="https://sharkimtraders.co.ke/checkout.html">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Checkout - Sharkim Traders">
+  <meta property="og:description" content="Complete your order securely at Sharkim Traders.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/sharkim_gold_logo.png">
+  <meta property="og:url" content="https://sharkimtraders.co.ke/checkout.html">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Supabase JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-100">
+
+<!-- TOP CONTACT BAR -->
+<div class="w-full bg-black text-gray-300 text-xs py-2">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+    <div></div>
+    <div class="flex items-center gap-4">
+      <a href="https://wa.me/254704843554" class="flex items-center gap-1 hover:text-yellow-400 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 32 32" fill="currentColor"><path d="M16 .5C7.6.5.5 7.6.5 16c0 2.8.7 5.5 2.2 7.9L0 32l8.3-2.7c2.3 1.3 5 2 7.7 2 8.4 0 15.5-7.1 15.5-15.5S24.4.5 16 .5zM16 29c-2.4 0-4.8-.6-6.9-1.8l-.5-.3-4.9 1.6 1.6-4.8-.3-.5C3.6 21 3 18.6 3 16 3 9.4 9.4 3 16 3s13 6.4 13 13-6.4 13-13 13zm7.3-9.8c-.4-.2-2.3-1.1-2.6-1.2s-.6-.2-.8.2c-.2.4-1 1.2-1.2 1.4s-.4.3-.8.1c-.4-.2-1.6-.6-3-2-1.1-1.1-1.9-2.3-2.1-2.7s0-.6.2-.8.4-.4.6-.6c.2-.2.3-.4.4-.6.1-.2 0-.5 0-.7s-.8-2-1.1-2.8c-.3-.8-.6-.7-.8-.7h-.7c-.2 0-.7.1-1.1.5s-1.4 1.4-1.4 3.4 1.4 3.9 1.6 4.1c.2.2 2.7 4.2 6.5 5.9.9.4 1.7.7 2.2.9.9.3 1.6.3 2.2.2.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/></svg>
+        +254 704 843 554
+      </a>
+      <a href="mailto:sharkimtraders97@gmail.com" class="hover:text-yellow-400 transition-colors">sharkimtraders97@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER - White background -->
+<header class="bg-white text-gray-900 shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="images/sharkim_gold_logo.png" alt="Sharkim Traders Logo" class="h-10 w-auto">
+      </a>
+      <a href="shop.html" class="text-amber-600 hover:text-amber-700 text-sm font-medium">← Continue Shopping</a>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Checkout</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Order Summary -->
+    <div class="md:col-span-1">
+      <div class="bg-white rounded-lg shadow p-4 sticky top-24">
+        <h2 class="font-semibold text-gray-900 mb-4">Order Summary</h2>
+        <div id="checkoutItems" class="space-y-3 mb-4"></div>
+        <div class="border-t pt-3">
+          <div class="flex justify-between items-center">
+            <span class="font-medium">Total:</span>
+            <span class="font-bold text-lg text-gray-900">Ksh <span id="checkoutTotal">0</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkout Form -->
+    <div class="md:col-span-2">
+      <form id="checkoutForm" class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-semibold text-gray-900 mb-4">Delivery Details</h2>
+        
+        <div class="space-y-4">
+          <div>
+            <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <input type="text" id="customerName" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent">
+          </div>
+
+          <div>
+            <label for="customerPhone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+            <input type="tel" id="customerPhone" name="phone" required placeholder="+254..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="customerCounty" class="block text-sm font-medium text-gray-700 mb-1">County</label>
+              <input type="text" id="customerCounty" name="county" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent">
+            </div>
+            <div>
+              <label for="customerTown" class="block text-sm font-medium text-gray-700 mb-1">Town / Estate</label>
+              <input type="text" id="customerTown" name="town" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent">
+            </div>
+          </div>
+
+          <div>
+            <label for="customerAddress" class="block text-sm font-medium text-gray-700 mb-1">Full Address *</label>
+            <textarea id="customerAddress" name="address" rows="3" required placeholder="Street, building, landmarks..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-transparent"></textarea>
+          </div>
+        </div>
+
+        <hr class="my-6">
+
+        <h2 class="font-semibold text-gray-900 mb-4">Payment Method</h2>
+        
+        <div class="space-y-3">
+          <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment" value="cod" checked class="w-4 h-4 text-amber-600">
+            <div>
+              <span class="font-medium text-gray-900">Cash on Delivery (COD)</span>
+              <p class="text-sm text-gray-500">Pay when your order arrives</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment" value="mpesa" class="w-4 h-4 text-amber-600">
+            <div>
+              <span class="font-medium text-gray-900">M-Pesa</span>
+              <p class="text-sm text-gray-500">Pay via M-Pesa before delivery</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment" value="pesapal" class="w-4 h-4 text-amber-600">
+            <div>
+              <span class="font-medium text-gray-900">Pesapal</span>
+              <p class="text-sm text-gray-500">Pay with card via Pesapal</p>
+            </div>
+          </label>
+        </div>
+
+        <hr class="my-6">
+
+        <button type="submit" class="w-full bg-amber-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-amber-700 transition-colors">
+          Place Order
+        </button>
+
+        <p class="text-xs text-gray-500 text-center mt-4">
+          By placing this order, you agree to our <a href="terms.html" class="text-amber-600 hover:underline">Terms of Service</a> and <a href="privacy.html" class="text-amber-600 hover:underline">Privacy Policy</a>.
+        </p>
+      </form>
+
+      <div id="orderMessage" class="mt-4"></div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-black text-gray-300 mt-16">
+  <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <p class="text-sm text-gray-500">&copy; 2025 Sharkim Traders. All rights reserved.</p>
+    </div>
+    <div class="text-center">
+      <a href="privacy.html" class="text-gray-400 hover:text-amber-500 text-sm">Privacy Policy</a>
+      <span class="mx-2 text-gray-600">|</span>
+      <a href="terms.html" class="text-gray-400 hover:text-amber-500 text-sm">Terms of Service</a>
+    </div>
+    <div class="text-right">
+      <p class="text-sm text-gray-500">Secure Checkout</p>
+    </div>
+  </div>
+</footer>
+
+<!-- JavaScript -->
+<script src="js/config.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/pesapal.js"></script>
+<script src="js/consent.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/checkout.js"></script>
+
+</body>
+</html>

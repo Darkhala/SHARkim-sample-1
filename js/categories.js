@@ -3,8 +3,31 @@
   - MAIN categories match the Word document provided
   - Each main category contains an array of subcategories
   - Exposed on window as CATEGORIES and MAIN_CATEGORIES
+  - Includes sanitizeId function for safe DOM operations
 */
 (function(){
+  'use strict';
+
+  /**
+   * Sanitize a string to be used as a valid HTML ID or querySelector
+   * - Converts to lowercase
+   * - Replaces spaces with hyphens
+   * - Replaces "&" with "and"
+   * - Removes special characters
+   * @param {string} str - The string to sanitize
+   * @returns {string} Sanitized ID-safe string
+   */
+  function sanitizeId(str) {
+    if (!str) return '';
+    return String(str)
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
   const CATEGORIES = {
     "Trending": [],
 
@@ -57,8 +80,8 @@
     ],
 
     "Fashion": [
-      "Men’s Fashion",
-      "Women’s Fashion",
+      "Men's Fashion",
+      "Women's Fashion",
       "Kids & Baby Fashion"
     ],
 
@@ -96,9 +119,9 @@
       "Babies and Kids Accessories",
       "Playground Equipment",
       "Care & Feeding",
-      "Children’s Clothing",
-      "Children’s Furniture",
-      "Children’s Shoes",
+      "Children's Clothing",
+      "Children's Furniture",
+      "Children's Shoes",
       "Maternity & Pregnancy",
       "Transport & Safety",
       "Toys, Games, & Bikes",
@@ -142,11 +165,41 @@
   };
 
   function titleCase(s){ return (s||'').replace(/\s+/g,' ').trim(); }
+  
   function getSubcategories(main){ return (CATEGORIES[main] || []).slice(); }
+  
   function getAllMainCategories(){ return Object.keys(CATEGORIES); }
 
+  /**
+   * Get sanitized ID for a category name
+   * Use this for creating safe HTML IDs and querySelectors
+   * @param {string} category - Category name
+   * @returns {string} Sanitized ID
+   */
+  function getCategorySanitizedId(category) {
+    return sanitizeId(category);
+  }
+
+  /**
+   * Find category by sanitized ID
+   * @param {string} sanitizedId - Sanitized ID to look up
+   * @returns {string|null} Original category name or null
+   */
+  function findCategoryBySanitizedId(sanitizedId) {
+    for (const category of Object.keys(CATEGORIES)) {
+      if (sanitizeId(category) === sanitizedId) {
+        return category;
+      }
+    }
+    return null;
+  }
+
+  // Expose on window
   window.CATEGORIES = CATEGORIES;
   window.MAIN_CATEGORIES = getAllMainCategories();
   window.getSubcategories = getSubcategories;
   window.normalizeCategory = titleCase;
+  window.sanitizeId = sanitizeId;
+  window.getCategorySanitizedId = getCategorySanitizedId;
+  window.findCategoryBySanitizedId = findCategoryBySanitizedId;
 })();

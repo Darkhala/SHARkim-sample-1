@@ -1,57 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="images/icon logo.png">
-  <title>Sharkim Traders | Home Appliances & Electronics</title>
-  <meta name="description" content="Shop quality home appliances and electronics at Sharkim Traders. Great prices, fast support, and reliable delivery across Kenya.">
-  <link rel="canonical" href="https://sharkimtraders.co.ke/index.html">
-  
-  <!-- Open Graph -->
-  <meta property="og:title" content="Sharkim Traders">
-  <meta property="og:description" content="Shop quality home appliances and electronics at Sharkim Traders.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="images/sharkim_gold_logo.png">
-  <meta property="og:url" content="https://sharkimtraders.co.ke/index.html">
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Sharkim Traders">
-  <meta name="twitter:description" content="Shop quality home appliances and electronics at Sharkim Traders.">
-  <meta name="twitter:image" content="images/sharkim_gold_logo.png">
+/**
+ * Sharkim Traders - UI Module
+ * Handles standardized navbar, footer, and common UI components
+ */
 
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Sharkim Traders",
-    "url": "https://sharkimtraders.co.ke",
-    "logo": "https://sharkimtraders.co.ke/images/sharkim_gold_logo.png",
-    "contactPoint": [{
-      "@type": "ContactPoint",
-      "telephone": "+254704843554",
-      "contactType": "customer service",
-      "areaServed": "KE"
-    }]
-  }
-  </script>
+(function() {
+  'use strict';
 
-  <!-- Tailwind CSS (via CDN for production, consider build step for optimization) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Supabase JS -->
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/style.css">
-
-  <!-- Google Site Verification -->
-  <meta name="google-site-verification" content="uxPP5lqdUTZHzt7bdvb35EFmGSualVMqV1GpBFpaQXc" />
-</head>
-<body class="bg-gray-100">
-
+  /**
+   * Create standardized navbar HTML
+   * @returns {string} Navbar HTML
+   */
+  function createNavbar() {
+    return `
 <!-- TOP CONTACT BAR -->
 <div class="w-full bg-black text-gray-300 text-xs py-2">
   <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
@@ -80,12 +40,6 @@
         Cart
         <span id="cartCount" class="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full">0</span>
       </button>
-    </div>
-
-    <!-- Search Row -->
-    <div class="flex items-center gap-2 mb-3">
-      <input type="text" id="searchInput" placeholder="Search products..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent text-gray-900">
-      <button id="searchBtn" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">Search</button>
     </div>
 
     <!-- Navigation - White background with dark text -->
@@ -124,44 +78,15 @@
       </ul>
     </nav>
   </div>
-</header>
+</header>`;
+  }
 
-<!-- HERO + CATEGORY SIDEBAR -->
-<section class="w-full py-6 bg-white">
-  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-4">
-    <!-- Left: Categories list -->
-    <aside class="hidden md:block md:col-span-3 bg-white rounded-lg shadow p-4 h-fit">
-      <h3 class="font-semibold mb-3 text-gray-900">Shop Categories</h3>
-      <ul id="leftCatList" class="space-y-2 text-sm"></ul>
-    </aside>
-
-    <!-- Mobile: Categories dropdown -->
-    <div class="md:hidden">
-      <button id="mobileCatToggle" class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg shadow">
-        <span class="font-semibold text-gray-900">Shop by Categories</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-      </button>
-      <div id="mobileCatPanel" class="mt-2 bg-white rounded-lg shadow p-4 hidden">
-        <ul id="mobileCatList" class="space-y-2 text-sm"></ul>
-      </div>
-    </div>
-
-    <!-- Right: Banner -->
-    <div class="md:col-span-9 relative rounded-lg overflow-hidden bg-white shadow">
-      <img src="images/Banner.png" class="w-full h-64 md:h-80 object-cover" alt="Sharkim Traders Banner" data-no-zoom>
-      <div class="absolute inset-0 bg-black/40"></div>
-      <div class="absolute inset-0 flex flex-col items-start justify-center p-6 md:p-8">
-        <h2 class="text-2xl md:text-4xl font-bold text-white drop-shadow-lg">Home Appliances & Electronics</h2>
-        <p class="text-white text-lg mt-2 drop-shadow">Shop now & save up to 40%</p>
-        <a href="shop.html" class="mt-4 inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">Shop Now</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MAIN PRODUCT SECTIONS -->
-<main class="max-w-7xl mx-auto px-4 py-8" id="mainContent"></main>
-
+  /**
+   * Create standardized footer HTML
+   * @returns {string} Footer HTML
+   */
+  function createFooter() {
+    return `
 <!-- Footer Section -->
 <footer class="bg-black text-gray-300 mt-16">
   <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -201,18 +126,34 @@
   <div class="border-t border-gray-800 text-center py-4">
     <p class="text-sm text-gray-500">&copy; 2025 Sharkim Traders. All rights reserved.</p>
   </div>
-</footer>
+</footer>`;
+  }
 
-<!-- JavaScript Files - No inline scripts -->
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/categories.js"></script>
-<script src="js/cart.js"></script>
-<script src="js/supabase.js"></script>
-<script src="js/pesapal.js"></script>
-<script src="js/consent.js"></script>
-<script src="js/analytics.js"></script>
-<script src="js/index.js"></script>
+  /**
+   * Initialize standardized UI components
+   * This function can be called on pages that want to use the shared navbar/footer
+   */
+  function init() {
+    // Auto-inject navbar if there's a placeholder
+    const navbarPlaceholder = document.getElementById('navbar-placeholder');
+    if (navbarPlaceholder) {
+      navbarPlaceholder.innerHTML = createNavbar();
+    }
 
-</body>
-</html>
+    // Auto-inject footer if there's a placeholder
+    const footerPlaceholder = document.getElementById('footer-placeholder');
+    if (footerPlaceholder) {
+      footerPlaceholder.innerHTML = createFooter();
+    }
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', init);
+
+  // Expose public API
+  window.SharkimUI = {
+    createNavbar,
+    createFooter,
+    init
+  };
+})();
