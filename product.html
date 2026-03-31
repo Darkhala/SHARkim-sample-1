@@ -23,23 +23,47 @@
     body { font-family: "Times New Roman", Times, serif, Arial, Helvetica, sans-serif; }
     img, svg { max-width: 100%; height: auto; }
   </style>
-  <!-- Google Merchant Structured Data -->
-<script type="application/ld+json" id="product-jsonld">
+  <!-- Google Merchant / Schema.org Product Structured Data -->
+  <script type="application/ld+json" id="product-jsonld">
   {
     "@context": "https://schema.org/",
     "@type": "Product",
-    "name": "Ramtons RM-399 Corded Electric Kettle – 1.7L Capacity, Fast Boil & Auto Shut-Off",
-    "image": ["https://..."],
-    "description": "Fast-boiling 1.7L kettle with auto shut-off",
-    "sku": "RM-399",
-    "brand": { "@type": "Brand", "name": "Ramtons" },
+    "name": "Product Name",
+    "image": [],
+    "description": "Product description",
+    "sku": "SKU",
+    "brand": {
+      "@type": "Brand",
+      "name": "Sharkim Traders"
+    },
     "offers": {
       "@type": "Offer",
       "priceCurrency": "KES",
-      "price": "2795.00",
+      "price": "0.00",
+      "priceValidUntil": "",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition",
-      "seller": { "@type": "Organization", "name": "Sharkim Traders" }
+      "url": "https://sharkimtraders.co.ke/product.html",
+      "seller": {
+        "@type": "Organization",
+        "name": "Sharkim Traders",
+        "url": "https://sharkimtraders.co.ke",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Royal Palms Mall, Mombasa Road",
+          "addressLocality": "Nairobi",
+          "addressCountry": "KE"
+        },
+        "telephone": "+254704843554",
+        "email": "sharkimtraders97@gmail.com"
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.5",
+      "reviewCount": "0",
+      "bestRating": "5",
+      "worstRating": "1"
     }
   }
   </script>
@@ -170,6 +194,9 @@
 <script src="js/utils.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/supabase.js"></script>
+<script src="js/pesapal.js"></script>
+<script src="js/consent.js"></script>
+<script src="js/analytics.js"></script>
 <script src="js/product.js"></script>
 <script src="js/theme.js"></script>
 </body>

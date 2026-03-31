@@ -1,5 +1,10 @@
 User-agent: *
 Allow: /
 
-# Sitemap for search engines and Google Merchant Center discovery
+# Sitemap for search engines
 Sitemap: https://sharkimtraders.co.ke/sitemap.xml
+
+# Google Merchant Center Product Feed
+# Note: The actual feed is served via Supabase Edge Function
+# This URL proxies to: https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed
+Sitemap: https://sharkimtraders.co.ke/merchant-products.xml
