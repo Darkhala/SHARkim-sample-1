@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+  <channel>
+    <title>Sharkim Traders Products</title>
+    <link>https://sharkimtraders.co.ke/</link>
+    <description>Quality home appliances and electronics in Kenya</description>
+    <language>en-KE</language>
+    <g:country>KE</g:country>
+    <g:language>en</g:language>
+    <lastBuildDate>Wed, 01 Apr 2026 07:00:00 +0000</lastBuildDate>
+    <!-- This is a placeholder feed. For live products, use the Supabase Edge Function: -->
+    <!-- https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed -->
+  </channel>
+</rss>

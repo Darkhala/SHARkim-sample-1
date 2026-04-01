@@ -8,26 +8,42 @@
  * No Edge Function required - fetches directly from Supabase REST API.
  */
 
-// Error handling - don't display errors in output
+// Error handling - suppress all errors from output
 error_reporting(0);
 ini_set('display_errors', 0);
 
-// Set proper headers for XML
-header('Content-Type: application/xml; charset=utf-8');
-header('Cache-Control: public, max-age=3600');
-header('Access-Control-Allow-Origin: *');
-header('X-Robots-Tag: noindex');
+// Start output buffering to catch any stray output
+ob_start();
 
 // Supabase Configuration
 $supabaseUrl = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
 $supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc';
 $baseUrl = 'https://sharkimtraders.co.ke/';
 
-// XML escape function
+// XML escape function - properly escapes all special characters
 function escapeXml($string) {
-    if (empty($string)) return '';
-    return htmlspecialchars($string, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    if ($string === null || $string === '') {
+        return '';
+    }
+    $string = (string) $string;
+    // First replace & to avoid double-escaping
+    $string = str_replace('&', '&amp;', $string);
+    $string = str_replace('<', '&lt;', $string);
+    $string = str_replace('>', '&gt;', $string);
+    $string = str_replace('"', '&quot;', $string);
+    $string = str_replace("'", '&apos;', $string);
+    // Remove control characters that are invalid in XML
+    $string = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/', '', $string);
+    return $string;
 }
+
+// Clear any output buffers
+ob_end_clean();
+
+// Set proper headers for XML
+header('Content-Type: application/xml; charset=utf-8');
+header('Cache-Control: public, max-age=3600');
+header('Access-Control-Allow-Origin: *');
 
 // Fetch products from Supabase
 $url = $supabaseUrl . '/rest/v1/products?status=eq.active&order=created_at.desc&limit=1000';
@@ -37,28 +53,39 @@ curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'apikey: ' . $supabaseAnonKey,
-    'Authorization: Bearer ' . $supabaseAnonKey,
-    'Content-Type: application/json'
+    'Authorization: Bearer ' . $supabaseAnonKey
 ]);
 
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
 curl_close($ch);
 
-// Start building XML
-$xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-$xml .= '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">' . "\n";
-$xml .= '  <channel>' . "\n";
-$xml .= '    <title>Sharkim Traders Products</title>' . "\n";
-$xml .= '    <link>' . $baseUrl . '</link>' . "\n";
-$xml .= '    <description>Quality home appliances and electronics in Kenya</description>' . "\n";
-$xml .= '    <language>en-KE</language>' . "\n";
-$xml .= '    <g:country>KE</g:country>' . "\n";
-$xml .= '    <g:language>en</g:language>' . "\n";
-$xml .= '    <lastBuildDate>' . date('r') . '</lastBuildDate>' . "\n";
+// Build XML using output buffering to ensure clean output
+ob_start();
+
+echo '<?xml version="1.0" encoding="UTF-8"?>';
+echo "\n";
+echo '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">';
+echo "\n";
+echo '  <channel>';
+echo "\n";
+echo '    <title>Sharkim Traders Products</title>';
+echo "\n";
+echo '    <link>' . escapeXml($baseUrl) . '</link>';
+echo "\n";
+echo '    <description>Quality home appliances and electronics in Kenya</description>';
+echo "\n";
+echo '    <language>en-KE</language>';
+echo "\n";
+echo '    <g:country>KE</g:country>';
+echo "\n";
+echo '    <g:language>en</g:language>';
+echo "\n";
+echo '    <lastBuildDate>' . date('r') . '</lastBuildDate>';
+echo "\n";
 
 // Process products if fetch was successful
 if ($httpCode === 200 && !empty($response)) {
@@ -66,25 +93,39 @@ if ($httpCode === 200 && !empty($response)) {
     
     if (is_array($products)) {
         foreach ($products as $product) {
-            // Validate required fields
-            $id = $product['id'] ?? $product['sku'] ?? null;
-            $title = $product['title'] ?? $product['name'] ?? null;
-            $price = $product['price'] ?? $product['sale_price'] ?? null;
-            $imageUrl = $product['image_url'] ?? $product['image'] ?? null;
+            // Get and validate required fields
+            $id = isset($product['id']) ? $product['id'] : (isset($product['sku']) ? $product['sku'] : null);
+            $title = isset($product['title']) ? $product['title'] : (isset($product['name']) ? $product['name'] : null);
+            $price = isset($product['price']) ? $product['price'] : (isset($product['sale_price']) ? $product['sale_price'] : null);
+            
+            // Get image URL
+            $imageUrl = isset($product['image_url']) ? $product['image_url'] : 
+                       (isset($product['image']) ? $product['image'] : null);
             
             // Handle images array
-            if (!$imageUrl && isset($product['images']) && is_array($product['images']) && count($product['images']) > 0) {
-                $imageUrl = $product['images'][0];
+            if (empty($imageUrl) && isset($product['images']) && is_array($product['images'])) {
+                foreach ($product['images'] as $img) {
+                    if (!empty($img)) {
+                        $imageUrl = $img;
+                        break;
+                    }
+                }
             }
             
             // Skip if missing required fields
-            if (!$id || !$title || !$price || !$imageUrl) {
+            if (empty($id) || empty($title) || empty($price) || empty($imageUrl)) {
+                continue;
+            }
+            
+            // Validate price is numeric
+            if (!is_numeric($price)) {
                 continue;
             }
             
             // Ensure image URL is HTTPS
-            if (!str_starts_with($imageUrl, 'https://')) {
-                if (str_starts_with($imageUrl, 'http://')) {
+            $imageUrl = trim($imageUrl);
+            if (strpos($imageUrl, 'https://') !== 0) {
+                if (strpos($imageUrl, 'http://') === 0) {
                     $imageUrl = str_replace('http://', 'https://', $imageUrl);
                 } else {
                     $imageUrl = $baseUrl . ltrim($imageUrl, '/');
@@ -95,37 +136,64 @@ if ($httpCode === 200 && !empty($response)) {
             $formattedPrice = number_format(floatval($price), 2, '.', '') . ' KES';
             
             // Determine availability
-            $stockQty = $product['stock_quantity'] ?? null;
+            $stockQty = isset($product['stock_quantity']) ? $product['stock_quantity'] : null;
             $availability = 'in stock';
-            if (is_numeric($stockQty) && $stockQty <= 0) {
+            if (is_numeric($stockQty) && intval($stockQty) <= 0) {
                 $availability = 'out of stock';
             }
             
-            // Build item XML
-            $xml .= '    <item>' . "\n";
-            $xml .= '      <g:id>' . escapeXml(strval($id)) . '</g:id>' . "\n";
-            $xml .= '      <g:title>' . escapeXml($title) . '</g:title>' . "\n";
-            $xml .= '      <g:description>' . escapeXml($product['description'] ?? '') . '</g:description>' . "\n";
-            $xml .= '      <g:link>' . $baseUrl . 'product.html?id=' . urlencode($id) . '</g:link>' . "\n";
-            $xml .= '      <g:image_link>' . escapeXml($imageUrl) . '</g:image_link>' . "\n";
-            $xml .= '      <g:price>' . $formattedPrice . '</g:price>' . "\n";
-            $xml .= '      <g:brand>' . escapeXml($product['brand'] ?? 'Sharkim Traders') . '</g:brand>' . "\n";
-            $xml .= '      <g:product_type>' . escapeXml($product['category'] ?? 'Electronics') . '</g:product_type>' . "\n";
-            $xml .= '      <g:google_product_category>172</g:google_product_category>' . "\n";
-            $xml .= '      <g:condition>new</g:condition>' . "\n";
-            $xml .= '      <g:availability>' . $availability . '</g:availability>' . "\n";
-            $xml .= '      <g:identifier_exists>false</g:identifier_exists>' . "\n";
-            $xml .= '      <g:shipping>' . "\n";
-            $xml .= '        <g:country>KE</g:country>' . "\n";
-            $xml .= '        <g:service>Standard</g:service>' . "\n";
-            $xml .= '        <g:price>0.00 KES</g:price>' . "\n";
-            $xml .= '      </g:shipping>' . "\n";
-            $xml .= '    </item>' . "\n";
+            // Get optional fields with defaults
+            $description = isset($product['description']) ? $product['description'] : '';
+            $brand = isset($product['brand']) ? $product['brand'] : 'Sharkim Traders';
+            $category = isset($product['category']) ? $product['category'] : 'Electronics';
+            
+            // Output item
+            echo '    <item>';
+            echo "\n";
+            echo '      <g:id>' . escapeXml($id) . '</g:id>';
+            echo "\n";
+            echo '      <g:title>' . escapeXml($title) . '</g:title>';
+            echo "\n";
+            echo '      <g:description>' . escapeXml($description) . '</g:description>';
+            echo "\n";
+            echo '      <g:link>' . escapeXml($baseUrl . 'product.html?id=' . urlencode($id)) . '</g:link>';
+            echo "\n";
+            echo '      <g:image_link>' . escapeXml($imageUrl) . '</g:image_link>';
+            echo "\n";
+            echo '      <g:price>' . $formattedPrice . '</g:price>';
+            echo "\n";
+            echo '      <g:brand>' . escapeXml($brand) . '</g:brand>';
+            echo "\n";
+            echo '      <g:product_type>' . escapeXml($category) . '</g:product_type>';
+            echo "\n";
+            echo '      <g:google_product_category>172</g:google_product_category>';
+            echo "\n";
+            echo '      <g:condition>new</g:condition>';
+            echo "\n";
+            echo '      <g:availability>' . $availability . '</g:availability>';
+            echo "\n";
+            echo '      <g:identifier_exists>false</g:identifier_exists>';
+            echo "\n";
+            echo '      <g:shipping>';
+            echo "\n";
+            echo '        <g:country>KE</g:country>';
+            echo "\n";
+            echo '        <g:service>Standard</g:service>';
+            echo "\n";
+            echo '        <g:price>0.00 KES</g:price>';
+            echo "\n";
+            echo '      </g:shipping>';
+            echo "\n";
+            echo '    </item>';
+            echo "\n";
         }
     }
 }
 
-$xml .= '  </channel>' . "\n";
-$xml .= '</rss>';
+echo '  </channel>';
+echo "\n";
+echo '</rss>';
 
-echo $xml;
+// Get buffered content and output
+$xmlOutput = ob_get_clean();
+echo $xmlOutput;
