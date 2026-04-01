@@ -1,4 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?php
+/**
+ * Sharkim Traders - Google Merchant Center Product Feed
+ * 
+ * This PHP script proxies requests to the Supabase Edge Function
+ * to provide a reliable feed at https://sharkimtraders.co.ke/product.xml
+ * 
+ * If the Supabase function is unavailable, it returns a valid empty feed.
+ */
+
+// Set proper headers for XML
+header('Content-Type: application/xml; charset=utf-8');
+header('Cache-Control: public, max-age=3600'); // Cache for 1 hour
+header('Access-Control-Allow-Origin: *');
+
+// Supabase Edge Function URL
+$supabaseFunctionUrl = 'https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed';
+
+// Try to fetch from Supabase
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $supabaseFunctionUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlError = curl_error($ch);
+curl_close($ch);
+
+// If successful, return the response
+if ($httpCode === 200 && !empty($response)) {
+    echo $response;
+    exit;
+}
+
+// If Supabase function failed, return a valid but empty feed
+// This ensures Google Merchant always gets valid XML
+$emptyFeed = '<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
     <title>Sharkim Traders</title>
@@ -7,5 +46,9 @@
     <language>en-KE</language>
     <g:country>KE</g:country>
     <g:language>en</g:language>
+    <lastBuildDate>' . date('r') . '</lastBuildDate>
+    <!-- Product feed temporarily unavailable. Please check the Supabase Edge Function. -->
   </channel>
-</rss>
+</rss>';
+
+echo $emptyFeed;
