@@ -2,11 +2,14 @@
 # Handles redirects for Google Merchant Center product feed
 
 # Enable Rewrite Engine
-RewriteEngine On
+<IfModule mod_rewrite.c>
+  RewriteEngine On
 
-# Redirect product.xml to Supabase Edge Function for live product feed
-# This allows Google Merchant Center to access the feed at https://sharkimtraders.co.ke/product.xml
-RewriteRule ^product\.xml$ https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed [P,L]
+  # Redirect product.xml to Supabase Edge Function for live product feed
+  # This allows Google Merchant Center to access the feed at https://sharkimtraders.co.ke/product.xml
+  RewriteCond %{REQUEST_URI} ^/product\.xml$
+  RewriteRule ^product\.xml$ https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed [P,L]
+</IfModule>
 
 # Set proper content type for XML files
 <IfModule mod_headers.c>
@@ -17,16 +20,20 @@ RewriteRule ^product\.xml$ https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1
 
 # Enable CORS for the product feed
 <IfModule mod_headers.c>
-  <Location "/product.xml">
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Headers "authorization, x-client-info, apikey, content-type"
-  </Location>
+  <IfModule mod_rewrite.c>
+    <IfModule mod_setenvif.c>
+      SetEnvIf Origin "^https?://[^/]+$" HTTP_ORIGIN=$0
+      Header set Access-Control-Allow-Origin "*" env=HTTP_ORIGIN
+      Header set Access-Control-Allow-Headers "authorization, x-client-info, apikey, content-type" env=HTTP_ORIGIN
+    </IfModule>
+  </IfModule>
 </IfModule>
 
-# Cache control for product.xml (cache for 1 hour)
+# Cache control for XML files (cache for 1 hour)
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType application/xml "access plus 1 hour"
+  ExpiresByType text/xml "access plus 1 hour"
 </IfModule>
 
 # Security headers
