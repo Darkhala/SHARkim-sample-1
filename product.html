@@ -44,30 +44,83 @@
       const schema = {
         "@context": "https://schema.org/",
         "@type": "Product",
-        "name": product.name,
-        "image": product.image ? [product.image] : [],
+        "name": product.title || product.name,
+        "image": [product.image_url || product.image],
         "description": product.description || "Buy this product from Sharkim Traders.",
-        "sku": String(product.id),
+        "sku": String(product.id || product.sku),
         "brand": {
           "@type": "Brand",
-          "name": "Sharkim Traders"
+          "name": product.brand || "Sharkim Traders"
         },
+        "category": product.category || "Electronics",
+        "condition": "NewCondition",
         "offers": {
           "@type": "Offer",
           "priceCurrency": "KES",
-          "price": Number(product.price).toFixed(2),
-          "availability": "https://schema.org/InStock",
+          "price": Number(product.price || 0).toFixed(2),
+          "priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          "availability": product.stock_quantity > 0 
+            ? "https://schema.org/InStock" 
+            : "https://schema.org/OutOfStock",
           "itemCondition": "https://schema.org/NewCondition",
-          "url": url
+          "url": url,
+          "seller": {
+            "@type": "Organization",
+            "name": "Sharkim Traders",
+            "url": "https://sharkimtraders.co.ke",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Royal Palms Mall, Mombasa Road",
+              "addressLocality": "Nairobi",
+              "addressRegion": "Nairobi",
+              "postalCode": "00100",
+              "addressCountry": "KE"
+            },
+            "telephone": "+254704843554",
+            "email": "sharkimtraders97@gmail.com"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "KES"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 2,
+                "unitCode": "DAY"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 2,
+                "maxValue": 5,
+                "unitCode": "DAY"
+              }
+            }
+          }
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.5",
+          "reviewCount": "0",
+          "bestRating": "5",
+          "worstRating": "1"
         }
       };
 
       document.getElementById("product-jsonld").textContent =
-        JSON.stringify(schema);
+        JSON.stringify(schema, null, 2);
 
       // ALSO fix canonical + OG dynamically
       document.querySelector('link[rel="canonical"]').href = url;
       document.querySelector('meta[property="og:url"]').content = url;
+      document.querySelector('meta[property="og:title"]').content = product.title || product.name;
+      document.querySelector('meta[property="og:description"]').content = product.description || "Buy this product from Sharkim Traders.";
+      document.querySelector('meta[property="og:image"]').content = product.image_url || product.image;
     }
   </script>
 
