@@ -2,53 +2,133 @@
 /**
  * Sharkim Traders - Google Merchant Center Product Feed
  * 
- * This PHP script proxies requests to the Supabase Edge Function
- * to provide a reliable feed at https://sharkimtraders.co.ke/product.xml
+ * This PHP script generates a live XML product feed directly from Supabase.
+ * It does NOT require the Supabase Edge Function to be deployed.
  * 
- * If the Supabase function is unavailable, it returns a valid empty feed.
+ * URL for Google Merchant Center: https://sharkimtraders.co.ke/product.xml
  */
 
 // Set proper headers for XML
 header('Content-Type: application/xml; charset=utf-8');
 header('Cache-Control: public, max-age=3600'); // Cache for 1 hour
 header('Access-Control-Allow-Origin: *');
+header('X-Robots-Tag: noindex');
 
-// Supabase Edge Function URL
-$supabaseFunctionUrl = 'https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed';
+// Supabase Configuration
+$supabaseUrl = 'https://evmiakneqtoxvnzeiwlz.supabase.co';
+$supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2bWlha25lcXRveHZuemVpd2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMTU4NTEsImV4cCI6MjA2OTg5MTg1MX0.lgW9OGAg8etuIzWPs-t0Ek_P7y3_m5GEo-ZSzbqbsGc';
+$baseUrl = 'https://sharkimtraders.co.ke/';
 
-// Try to fetch from Supabase
+// XML escape function
+function escapeXml($string) {
+    return htmlspecialchars($string, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+}
+
+// Fetch products from Supabase
+$url = $supabaseUrl . '/rest/v1/products?status=eq.active&order=created_at.desc&limit=1000';
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $supabaseFunctionUrl);
+curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'apikey: ' . $supabaseAnonKey,
+    'Authorization: Bearer ' . $supabaseAnonKey,
+    'Content-Type: application/json'
+]);
 
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
-// If successful, return the response
+// Start building XML
+$xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+$xml .= '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">' . "\n";
+$xml .= '  <channel>' . "\n";
+$xml .= '    <title>Sharkim Traders Products</title>' . "\n";
+$xml .= '    <link>' . $baseUrl . '</link>' . "\n";
+$xml .= '    <description>Quality home appliances and electronics in Kenya</description>' . "\n";
+$xml .= '    <language>en-KE</language>' . "\n";
+$xml .= '    <g:country>KE</g:country>' . "\n";
+$xml .= '    <g:language>en</g:language>' . "\n";
+$xml .= '    <lastBuildDate>' . date('r') . '</lastBuildDate>' . "\n";
+
+// Process products if fetch was successful
 if ($httpCode === 200 && !empty($response)) {
-    echo $response;
-    exit;
+    $products = json_decode($response, true);
+    
+    if (is_array($products)) {
+        $itemCount = 0;
+        
+        foreach ($products as $product) {
+            // Validate required fields
+            $id = $product['id'] ?? $product['sku'] ?? null;
+            $title = $product['title'] ?? $product['name'] ?? null;
+            $price = $product['price'] ?? $product['sale_price'] ?? null;
+            $imageUrl = $product['image_url'] ?? $product['image'] ?? null;
+            
+            // Handle images array
+            if (!$imageUrl && isset($product['images']) && is_array($product['images']) && count($product['images']) > 0) {
+                $imageUrl = $product['images'][0];
+            }
+            
+            // Skip if missing required fields
+            if (!$id || !$title || !$price || !$imageUrl) {
+                continue;
+            }
+            
+            // Ensure image URL is HTTPS
+            if (!str_starts_with($imageUrl, 'https://')) {
+                if (str_starts_with($imageUrl, 'http://')) {
+                    $imageUrl = str_replace('http://', 'https://', $imageUrl);
+                } else {
+                    $imageUrl = $baseUrl . ltrim($imageUrl, '/');
+                }
+            }
+            
+            // Format price
+            $formattedPrice = number_format(floatval($price), 2, '.', '') . ' KES';
+            
+            // Determine availability
+            $stockQty = $product['stock_quantity'] ?? null;
+            $status = $product['status'] ?? 'active';
+            $availability = 'in stock';
+            if ($status === 'out_of_stock' || $status === 'discontinued') {
+                $availability = 'out of stock';
+            } elseif (is_numeric($stockQty) && $stockQty <= 0) {
+                $availability = 'out of stock';
+            }
+            
+            // Build item XML
+            $xml .= '    <item>' . "\n";
+            $xml .= '      <g:id>' . escapeXml(strval($id)) . '</g:id>' . "\n";
+            $xml .= '      <g:title>' . escapeXml($title) . '</g:title>' . "\n";
+            $xml .= '      <g:description>' . escapeXml($product['description'] ?? '') . '</g:description>' . "\n";
+            $xml .= '      <g:link>' . $baseUrl . 'product.html?id=' . urlencode($id) . '</g:link>' . "\n";
+            $xml .= '      <g:image_link>' . escapeXml($imageUrl) . '</g:image_link>' . "\n";
+            $xml .= '      <g:price>' . $formattedPrice . '</g:price>' . "\n";
+            $xml .= '      <g:brand>' . escapeXml($product['brand'] ?? 'Sharkim Traders') . '</g:brand>' . "\n";
+            $xml .= '      <g:product_type>' . escapeXml($product['category'] ?? 'Electronics') . '</g:product_type>' . "\n";
+            $xml .= '      <g:google_product_category>172</g:google_product_category>' . "\n";
+            $xml .= '      <g:condition>new</g:condition>' . "\n";
+            $xml .= '      <g:availability>' . $availability . '</g:availability>' . "\n";
+            $xml .= '      <g:identifier_exists>false</g:identifier_exists>' . "\n";
+            $xml .= '      <g:shipping>' . "\n";
+            $xml .= '        <g:country>KE</g:country>' . "\n";
+            $xml .= '        <g:service>Standard</g:service>' . "\n";
+            $xml .= '        <g:price>0.00 KES</g:price>' . "\n";
+            $xml .= '      </g:shipping>' . "\n";
+            $xml .= '    </item>' . "\n";
+            
+            $itemCount++;
+        }
+        
+        // Add comment with product count
+        $xml .= '  <!-- Total products: ' . $itemCount . ' -->' . "\n";
+    }
 }
 
-// If Supabase function failed, return a valid but empty feed
-// This ensures Google Merchant always gets valid XML
-$emptyFeed = '<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
-  <channel>
-    <title>Sharkim Traders</title>
-    <link>https://sharkimtraders.co.ke/</link>
-    <description>Official product feed for Sharkim Traders - Quality home appliances and electronics in Kenya</description>
-    <language>en-KE</language>
-    <g:country>KE</g:country>
-    <g:language>en</g:language>
-    <lastBuildDate>' . date('r') . '</lastBuildDate>
-    <!-- Product feed temporarily unavailable. Please check the Supabase Edge Function. -->
-  </channel>
-</rss>';
+$xml .= '  </channel>' . "\n";
+$xml .= '</rss>';
 
-echo $emptyFeed;
+echo $xml;
