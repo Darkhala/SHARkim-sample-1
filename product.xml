@@ -3,14 +3,18 @@
  * Sharkim Traders - Google Merchant Center Product Feed
  * 
  * This PHP script generates a live XML product feed directly from Supabase.
- * It does NOT require the Supabase Edge Function to be deployed.
- * 
  * URL for Google Merchant Center: https://sharkimtraders.co.ke/product.xml
+ * 
+ * No Edge Function required - fetches directly from Supabase REST API.
  */
+
+// Error handling - don't display errors in output
+error_reporting(0);
+ini_set('display_errors', 0);
 
 // Set proper headers for XML
 header('Content-Type: application/xml; charset=utf-8');
-header('Cache-Control: public, max-age=3600'); // Cache for 1 hour
+header('Cache-Control: public, max-age=3600');
 header('Access-Control-Allow-Origin: *');
 header('X-Robots-Tag: noindex');
 
@@ -21,15 +25,18 @@ $baseUrl = 'https://sharkimtraders.co.ke/';
 
 // XML escape function
 function escapeXml($string) {
+    if (empty($string)) return '';
     return htmlspecialchars($string, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 }
 
 // Fetch products from Supabase
 $url = $supabaseUrl . '/rest/v1/products?status=eq.active&order=created_at.desc&limit=1000';
+
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'apikey: ' . $supabaseAnonKey,
     'Authorization: Bearer ' . $supabaseAnonKey,
@@ -58,8 +65,6 @@ if ($httpCode === 200 && !empty($response)) {
     $products = json_decode($response, true);
     
     if (is_array($products)) {
-        $itemCount = 0;
-        
         foreach ($products as $product) {
             // Validate required fields
             $id = $product['id'] ?? $product['sku'] ?? null;
@@ -91,11 +96,8 @@ if ($httpCode === 200 && !empty($response)) {
             
             // Determine availability
             $stockQty = $product['stock_quantity'] ?? null;
-            $status = $product['status'] ?? 'active';
             $availability = 'in stock';
-            if ($status === 'out_of_stock' || $status === 'discontinued') {
-                $availability = 'out of stock';
-            } elseif (is_numeric($stockQty) && $stockQty <= 0) {
+            if (is_numeric($stockQty) && $stockQty <= 0) {
                 $availability = 'out of stock';
             }
             
@@ -119,12 +121,7 @@ if ($httpCode === 200 && !empty($response)) {
             $xml .= '        <g:price>0.00 KES</g:price>' . "\n";
             $xml .= '      </g:shipping>' . "\n";
             $xml .= '    </item>' . "\n";
-            
-            $itemCount++;
         }
-        
-        // Add comment with product count
-        $xml .= '  <!-- Total products: ' . $itemCount . ' -->' . "\n";
     }
 }
 
