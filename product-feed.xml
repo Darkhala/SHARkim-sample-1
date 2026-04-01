@@ -7,8 +7,6 @@
     <language>en-KE</language>
     <g:country>KE</g:country>
     <g:language>en</g:language>
-    <lastBuildDate>Wed, 01 Apr 2026 07:00:00 +0000</lastBuildDate>
-    <!-- This is a placeholder feed. For live products, use the Supabase Edge Function: -->
-    <!-- https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed -->
+    <lastBuildDate>Wed, 01 Apr 2026 08:00:00 +0000</lastBuildDate>
   </channel>
 </rss>
