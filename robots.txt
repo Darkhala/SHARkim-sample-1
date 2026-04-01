@@ -5,6 +5,8 @@ Allow: /
 Sitemap: https://sharkimtraders.co.ke/sitemap.xml
 
 # Google Merchant Center Product Feed
-# Note: The actual feed is served via Supabase Edge Function
-# This URL proxies to: https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed
-Sitemap: https://sharkimtraders.co.ke/merchant-products.xml
+# Primary feed URL for Google Merchant Center
+Sitemap: https://sharkimtraders.co.ke/product.xml
+
+# Alternative feed URL (Supabase Edge Function)
+Sitemap: https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed

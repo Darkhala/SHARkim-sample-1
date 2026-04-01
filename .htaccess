@@ -1,0 +1,37 @@
+# Sharkim Traders - Apache Configuration
+# Handles redirects for Google Merchant Center product feed
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect product.xml to Supabase Edge Function for live product feed
+# This allows Google Merchant Center to access the feed at https://sharkimtraders.co.ke/product.xml
+RewriteRule ^product\.xml$ https://evmiakneqtoxvnzeiwlz.supabase.co/functions/v1/merchant-feed [P,L]
+
+# Set proper content type for XML files
+<IfModule mod_headers.c>
+  <FilesMatch "\.xml$">
+    Header set Content-Type "application/xml; charset=utf-8"
+  </FilesMatch>
+</IfModule>
+
+# Enable CORS for the product feed
+<IfModule mod_headers.c>
+  <Location "/product.xml">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Headers "authorization, x-client-info, apikey, content-type"
+  </Location>
+</IfModule>
+
+# Cache control for product.xml (cache for 1 hour)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/xml "access plus 1 hour"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+</IfModule>
